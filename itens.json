@@ -3,192 +3,192 @@
     "id": 1,
     "nome": "Carne bovina premium crua",
     "valor": 200,
-    "sprite": "sprites/carne_bovina_premium.png"
+    "sprite": "sprites/itens/premium_raw_beef.png"
   },
   {
     "id": 2,
     "nome": "Lagosta crua",
     "valor": 370,
-    "sprite": "sprites/lagosta.png"
+    "sprite": "sprites/itens/raw_lobster.png"
   },
   {
     "id": 3,
     "nome": "Camarão cru",
     "valor": 300,
-    "sprite": "sprites/camarao.png"
+    "sprite": "sprites/itens/raw_shrimp.png"
   },
   {
     "id": 4,
     "nome": "Carne de coelho crua",
     "valor": 186,
-    "sprite": "sprites/carne_coelho.png"
+    "sprite": "sprites/itens/raw_rabbit_meat.png"
   },
   {
     "id": 5,
     "nome": "Peixe cru",
     "valor": 50,
-    "sprite": "sprites/peixe.png"
+    "sprite": "sprites/itens/raw_fish.png"
   },
   {
     "id": 6,
     "nome": "Atum",
     "valor": 86,
-    "sprite": "sprites/atum.png"
+    "sprite": "sprites/itens/tuna.png"
   },
   {
     "id": 7,
     "nome": "Ostra",
     "valor": 360,
-    "sprite": "sprites/ostra.png"
+    "sprite": "sprites/itens/oyster.png"
   },
   {
     "id": 8,
     "nome": "Bacon",
     "valor": 10,
-    "sprite": "sprites/bacon.png"
+    "sprite": "sprites/itens/bacon.png"
   },
   {
     "id": 9,
     "nome": "Ovo",
     "valor": 10,
-    "sprite": "sprites/ovo.png"
+    "sprite": "sprites/itens/egg.png"
   },
   {
     "id": 10,
     "nome": "Manteiga",
     "valor": 40,
-    "sprite": "sprites/manteiga.png"
+    "sprite": "sprites/itens/butter.png"
   },
   {
     "id": 11,
     "nome": "Folhas verdes",
     "valor": 15,
-    "sprite": "sprites/folhas_verdes.png"
+    "sprite": "sprites/itens/green_leaves.png"
   },
   {
     "id": 12,
     "nome": "Alface",
     "valor": 20,
-    "sprite": "sprites/alface.png"
+    "sprite": "sprites/itens/lettuce.png"
   },
   {
     "id": 13,
-    "nome": "Tomates",
+    "nome": "Tomate",
     "valor": 10,
-    "sprite": "sprites/tomate.png"
+    "sprite": "sprites/itens/tomatoes.png"
   },
   {
     "id": 14,
     "nome": "Limão",
     "valor": 10,
-    "sprite": "sprites/limao.png"
+    "sprite": "sprites/itens/lemon.png"
   },
   {
     "id": 15,
     "nome": "Água",
     "valor": 5,
-    "sprite": "sprites/agua.png"
+    "sprite": "sprites/itens/water.png"
   },
   {
     "id": 16,
     "nome": "Vinho branco",
     "valor": 700,
-    "sprite": "sprites/vinho_branco.png"
+    "sprite": "sprites/itens/white_wine.png"
   },
   {
     "id": 17,
     "nome": "Cogumelo",
     "valor": 20,
-    "sprite": "sprites/cogumelo.png"
+    "sprite": "sprites/itens/mushroom.png"
   },
   {
     "id": 18,
     "nome": "Trufa branca",
     "valor": 250,
-    "sprite": "sprites/trufa_branca.png"
+    "sprite": "sprites/itens/white_truffle.png"
   },
   {
     "id": 19,
     "nome": "Sal",
     "valor": 10,
-    "sprite": "sprites/sal.png"
+    "sprite": "sprites/itens/salt.png"
   },
   {
     "id": 20,
     "nome": "Pimenta",
     "valor": 15,
-    "sprite": "sprites/pimenta.png"
+    "sprite": "sprites/itens/pepper.png"
   },
   {
     "id": 21,
     "nome": "Arroz",
     "valor": 10,
-    "sprite": "sprites/arroz.png"
+    "sprite": "sprites/itens/rice.png"
   },
   {
     "id": 22,
     "nome": "Alho",
     "valor": 10,
-    "sprite": "sprites/alho.png"
+    "sprite": "sprites/itens/garlic.png"
   },
   {
     "id": 23,
     "nome": "Batata",
     "valor": 10,
-    "sprite": "sprites/batata.png"
+    "sprite": "sprites/itens/potato.png"
   },
   {
     "id": 24,
     "nome": "Azeite",
     "valor": 15,
-    "sprite": "sprites/azeite.png"
+    "sprite": "sprites/itens/olive_oil.png"
   },
   {
     "id": 25,
     "nome": "Cebola",
     "valor": 10,
-    "sprite": "sprites/cebola.png"
+    "sprite": "sprites/itens/onion.png"
   },
   {
     "id": 26,
-    "nome": "Creme de leite fresco",
+    "nome": "Creme de leite",
     "valor": 20,
-    "sprite": "sprites/creme_leite.png"
+    "sprite": "sprites/itens/heavy_cream.png"
   },
   {
     "id": 27,
     "nome": "Massa",
     "valor": 10,
-    "sprite": "sprites/massa.png"
+    "sprite": "sprites/itens/pasta.png"
   },
   {
     "id": 28,
     "nome": "Queijo",
     "valor": 15,
-    "sprite": "sprites/queijo.png"
+    "sprite": "sprites/itens/cheese.png"
   },
   {
     "id": 29,
     "nome": "Carne de caranguejo",
     "valor": 400,
-    "sprite": "sprites/caranguejo.png"
+    "sprite": "sprites/itens/crab_meat.png"
   },
   {
     "id": 30,
     "nome": "Polvo cru",
     "valor": 500,
-    "sprite": "sprites/polvo.png"
+    "sprite": "sprites/itens/raw_octopus.png"
   },
   {
     "id": 31,
     "nome": "Frango",
     "valor": 300,
-    "sprite": "sprites/frango.png"
+    "sprite": "sprites/itens/chicken.png"
   },
   {
     "id": 32,
     "nome": "Carne de cordeiro crua",
     "valor": 650,
-    "sprite": "sprites/carne_cordeiro.png"
+    "sprite": "sprites/itens/raw_lamb_meat.png"
   }
 ]
