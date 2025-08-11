@@ -2,163 +2,182 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Calculadora de Receitas</title>
+<title>Helper de Receitas</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    background: #f0f0f0;
-    color: #000;
-    margin: 0;
     display: flex;
     height: 100vh;
+    margin: 0;
+    background: #f4f4f4;
+    color: #333;
+    transition: background 0.3s, color 0.3s;
   }
   body.dark {
     background: #1e1e1e;
-    color: #fff;
+    color: #f4f4f4;
   }
-  .lista-receitas {
-    border: 2px solid red;
-    width: 220px;
-    padding: 5px;
+  #lista-receitas {
+    flex: 1;
+    background: #ffdddd;
     overflow-y: auto;
+    padding: 10px;
   }
-  .lista-receitas div {
+  body.dark #lista-receitas {
+    background: #662222;
+  }
+  .receita-item {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px;
+    gap: 10px;
     cursor: pointer;
+    padding: 5px;
+    border-bottom: 1px solid #ccc;
   }
-  .lista-receitas div:hover {
-    background: rgba(255,0,0,0.2);
-  }
-  .lista-receitas img {
-    width: 32px;
-    height: 32px;
+  .receita-item img {
+    width: 40px;
+    height: 40px;
     object-fit: contain;
   }
-  .detalhes-receita {
-    border: 2px solid blue;
-    flex: 1;
+  #detalhes {
+    flex: 2;
+    background: #ddeaff;
     padding: 10px;
-    overflow-y: auto;
   }
-  .painel-direito {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-    width: 200px;
-  }
-  .painel-direito input {
-    padding: 5px;
-    font-size: 16px;
+  body.dark #detalhes {
+    background: #223355;
   }
   .ingrediente {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
-    gap: 8px;
+    gap: 10px;
+    padding: 3px 0;
   }
   .ingrediente img {
     width: 32px;
     height: 32px;
     object-fit: contain;
   }
-  .modo-btn {
-    margin-top: auto;
+  #painel {
+    flex: 1;
+    background: #fff0dd;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  body.dark #painel {
+    background: #553311;
+  }
+  .painel-box {
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  body.dark .painel-box {
+    background: #333;
+  }
+  input[type="number"] {
+    width: 100%;
     padding: 5px;
+  }
+  button {
+    padding: 5px 10px;
     cursor: pointer;
   }
 </style>
 </head>
 <body>
-  <div class="lista-receitas" id="listaReceitas"></div>
-  <div class="detalhes-receita" id="detalhesReceita"></div>
-  <div class="painel-direito">
-    <input type="number" id="quantidade" min="1" max="100" value="1">
-    <input type="text" id="valorTotal" placeholder="Valor total" readonly>
-    <input type="number" id="valorVenda" placeholder="Valor venda">
-    <input type="text" id="lucro" placeholder="Lucro" readonly>
-    <button class="modo-btn" id="modoBtn">🌙 Modo Noturno</button>
+
+<div id="lista-receitas"></div>
+
+<div id="detalhes">
+  <h2 id="nome-receita"></h2>
+  <div id="ingredientes-lista"></div>
+</div>
+
+<div id="painel">
+  <div class="painel-box">
+    Quantidade:
+    <input type="number" id="qtd" min="1" max="100" value="1">
   </div>
+  <div class="painel-box">Custo total: <span id="custo-total">Ƀ 0</span></div>
+  <div class="painel-box">Preço de venda: <input type="number" id="preco-venda" value="0"></div>
+  <div class="painel-box">Lucro: <span id="lucro">Ƀ 0</span></div>
+  <button id="toggle-dark">Alternar modo noturno</button>
+</div>
 
 <script>
 let itens = [];
 let receitas = [];
-let receitaAtual = null;
+let receitaSelecionada = null;
 
-Promise.all([
-  fetch('itens.json').then(r => r.json()),
-  fetch('receitas.json').then(r => r.json())
-]).then(([dadosItens, dadosReceitas]) => {
-  itens = dadosItens;
-  receitas = dadosReceitas;
-  carregarListaReceitas();
-});
+fetch('itens.json')
+  .then(res => res.json())
+  .then(data => {
+    itens = data;
+    return fetch('receitas.json');
+  })
+  .then(res => res.json())
+  .then(data => {
+    receitas = data;
+    carregarReceitas();
+  });
 
-function carregarListaReceitas() {
-  const lista = document.getElementById('listaReceitas');
+function carregarReceitas() {
+  const lista = document.getElementById('lista-receitas');
   lista.innerHTML = '';
   receitas.forEach(r => {
     const div = document.createElement('div');
-    const img = document.createElement('img');
-    img.src = r.sprite;
-    img.alt = r.nome;
-    const span = document.createElement('span');
-    span.textContent = r.nome;
-    div.appendChild(img);
-    div.appendChild(span);
+    div.className = 'receita-item';
+    div.innerHTML = `<img src="${r.sprite}" alt=""> <span>${r.nome}</span>`;
     div.onclick = () => selecionarReceita(r);
     lista.appendChild(div);
   });
 }
 
 function selecionarReceita(receita) {
-  receitaAtual = receita;
-  const detalhes = document.getElementById('detalhesReceita');
-  detalhes.innerHTML = `<h2><img src="${receita.sprite}" alt="" style="width:48px;height:48px;vertical-align:middle;"> ${receita.nome}</h2>`;
-  
+  receitaSelecionada = receita;
+  document.getElementById('nome-receita').innerText = receita.nome;
+  const listaIng = document.getElementById('ingredientes-lista');
+  listaIng.innerHTML = '';
   receita.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
     if (!itemInfo) return;
-    const precoUnit = itemInfo.valor;
-    const qtdTotal = ing.quantidade * parseInt(document.getElementById('quantidade').value);
-    const precoTotal = precoUnit * qtdTotal;
-
     const div = document.createElement('div');
-    div.classList.add('ingrediente');
+    div.className = 'ingrediente';
     div.innerHTML = `
       <img src="${itemInfo.sprite}" alt="">
-      ${itemInfo.nome} - ${qtdTotal}x (${ing.quantidade} base) × ₿${precoUnit.toLocaleString('pt-BR')} = ₿${precoTotal.toLocaleString('pt-BR')}
+      <span>${itemInfo.nome} - ${ing.quantidade} base</span>
     `;
-    detalhes.appendChild(div);
+    listaIng.appendChild(div);
   });
-
-  calcularTotais();
+  atualizarCusto();
 }
 
-function calcularTotais() {
-  if (!receitaAtual) return;
-  let total = 0;
-  receitaAtual.ingredientes.forEach(ing => {
+function atualizarCusto() {
+  if (!receitaSelecionada) return;
+  const qtd = parseInt(document.getElementById('qtd').value) || 1;
+  let custo = 0;
+  receitaSelecionada.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
     if (itemInfo) {
-      total += itemInfo.valor * ing.quantidade * parseInt(document.getElementById('quantidade').value);
+      custo += itemInfo.valor * ing.quantidade * qtd;
     }
   });
-  document.getElementById('valorTotal').value = `₿${total.toLocaleString('pt-BR')}`;
-  
-  const venda = parseFloat(document.getElementById('valorVenda').value) || 0;
-  document.getElementById('lucro').value = `₿${(venda - total).toLocaleString('pt-BR')}`;
+  document.getElementById('custo-total').innerText = "Ƀ " + custo.toLocaleString('pt-BR');
+  const precoVenda = parseInt(document.getElementById('preco-venda').value) || 0;
+  const lucro = precoVenda - custo;
+  document.getElementById('lucro').innerText = "Ƀ " + lucro.toLocaleString('pt-BR');
 }
 
-document.getElementById('quantidade').addEventListener('input', () => selecionarReceita(receitaAtual));
-document.getElementById('valorVenda').addEventListener('input', calcularTotais);
+document.getElementById('qtd').addEventListener('input', atualizarCusto);
+document.getElementById('preco-venda').addEventListener('input', atualizarCusto);
 
-document.getElementById('modoBtn').addEventListener('click', () => {
+document.getElementById('toggle-dark').addEventListener('click', () => {
   document.body.classList.toggle('dark');
 });
 </script>
+
 </body>
 </html>
