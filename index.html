@@ -5,217 +5,145 @@
 <title>Calculadora de Receitas</title>
 <style>
   body {
-    display: flex;
     font-family: Arial, sans-serif;
     background: #f0f0f0;
-    margin: 0;
     color: #000;
+    margin: 0;
+    display: flex;
+    height: 100vh;
   }
-  #lista-receitas {
-    width: 25%;
-    background: #ffcccc;
+  body.dark {
+    background: #1e1e1e;
+    color: #fff;
+  }
+  .lista-receitas {
+    border: 2px solid red;
+    width: 200px;
+    padding: 5px;
+    overflow-y: auto;
+  }
+  .lista-receitas div {
+    padding: 5px;
+    cursor: pointer;
+  }
+  .lista-receitas div:hover {
+    background: rgba(255,0,0,0.2);
+  }
+  .detalhes-receita {
+    border: 2px solid blue;
+    flex: 1;
     padding: 10px;
     overflow-y: auto;
-    border-right: 2px solid #aaa;
   }
-  #lista-receitas div {
-    padding: 8px;
-    margin: 5px 0;
-    background: white;
-    cursor: pointer;
-    border-radius: 4px;
+  .painel-direito {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
   }
-  #lista-receitas div:hover {
-    background: #ffe6e6;
-  }
-  #detalhes-receita {
-    flex: 1;
-    padding: 15px;
-    background: #cce5ff;
+  .painel-direito input {
+    padding: 5px;
+    font-size: 16px;
   }
   .ingrediente {
     display: flex;
     align-items: center;
     margin-bottom: 8px;
-    background: #fff;
-    padding: 5px;
-    border-radius: 4px;
   }
   .ingrediente img {
     width: 32px;
     height: 32px;
     margin-right: 10px;
+    object-fit: contain;
   }
-  #painel-calculo {
-    width: 250px;
-    background: #e6e6e6;
-    padding: 10px;
-    border-left: 2px solid #aaa;
-  }
-  .painel-box {
-    background: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-  }
-
-  /* -------- MODO NOTURNO -------- */
-  body.dark {
-    background: #1e1e1e;
-    color: #f5f5f5;
-  }
-  body.dark #lista-receitas {
-    background: #442222;
-    border-color: #666;
-  }
-  body.dark #lista-receitas div {
-    background: #333;
-    color: #f5f5f5;
-  }
-  body.dark #lista-receitas div:hover {
-    background: #555;
-  }
-  body.dark #detalhes-receita {
-    background: #223344;
-  }
-  body.dark .ingrediente {
-    background: #2a2a2a;
-  }
-  body.dark #painel-calculo {
-    background: #2d2d2d;
-    border-color: #555;
-  }
-  body.dark .painel-box {
-    background: #3a3a3a;
-    color: #f5f5f5;
-  }
-  /* Botão modo noturno */
-  #toggle-dark {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 6px 12px;
-    background: #444;
-    color: white;
-    border: none;
-    border-radius: 4px;
+  .modo-btn {
+    margin-top: auto;
+    padding: 5px;
     cursor: pointer;
-  }
-  body.dark #toggle-dark {
-    background: #ddd;
-    color: black;
   }
 </style>
 </head>
 <body>
-
-<button id="toggle-dark">🌙 Modo Noturno</button>
-
-<div id="lista-receitas"></div>
-<div id="detalhes-receita">
-  <h2>Selecione uma receita</h2>
-</div>
-<div id="painel-calculo">
-  <div class="painel-box">
-    <label>Quantidade:</label>
-    <input type="number" id="quantidade" value="1" min="1" max="100">
+  <div class="lista-receitas" id="listaReceitas"></div>
+  <div class="detalhes-receita" id="detalhesReceita"></div>
+  <div class="painel-direito">
+    <input type="number" id="quantidade" min="1" max="100" value="1">
+    <input type="text" id="valorTotal" placeholder="Valor total" readonly>
+    <input type="number" id="valorVenda" placeholder="Valor venda">
+    <input type="text" id="lucro" placeholder="Lucro" readonly>
+    <button class="modo-btn" id="modoBtn">🌙 Modo Noturno</button>
   </div>
-  <div class="painel-box">
-    <label>Valor total da receita:</label>
-    <div id="valor-total">R$ 0</div>
-  </div>
-  <div class="painel-box">
-    <label>Preço de venda:</label>
-    <input type="number" id="preco-venda" value="0">
-  </div>
-  <div class="painel-box">
-    <label>Lucro:</label>
-    <div id="lucro">R$ 0</div>
-  </div>
-</div>
 
 <script>
 let itens = [];
 let receitas = [];
-let receitaSelecionada = null;
+let receitaAtual = null;
 
 Promise.all([
-  fetch('itens.json').then(res => res.json()),
-  fetch('receitas.json').then(res => res.json())
-]).then(([itensData, receitasData]) => {
-  itens = itensData;
-  receitas = receitasData;
-  mostrarListaReceitas();
+  fetch('itens.json').then(r => r.json()),
+  fetch('receitas.json').then(r => r.json())
+]).then(([dadosItens, dadosReceitas]) => {
+  itens = dadosItens;
+  receitas = dadosReceitas;
+  carregarListaReceitas();
 });
 
-function mostrarListaReceitas() {
-  const lista = document.getElementById('lista-receitas');
+function carregarListaReceitas() {
+  const lista = document.getElementById('listaReceitas');
   lista.innerHTML = '';
-  receitas.forEach((r, index) => {
+  receitas.forEach(r => {
     const div = document.createElement('div');
-    div.textContent = `${r.nome} (Lv ${r.level})`;
-    div.onclick = () => selecionarReceita(index);
+    div.textContent = r.nome;
+    div.onclick = () => selecionarReceita(r);
     lista.appendChild(div);
   });
 }
 
-function selecionarReceita(index) {
-  receitaSelecionada = receitas[index];
-  atualizarDetalhes();
-}
+function selecionarReceita(receita) {
+  receitaAtual = receita;
+  const detalhes = document.getElementById('detalhesReceita');
+  detalhes.innerHTML = `<h2>${receita.nome}</h2>`;
+  
+  receita.ingredientes.forEach(ing => {
+    const itemInfo = itens.find(i => i.id === ing.id);
+    if (!itemInfo) return;
+    const precoUnit = itemInfo.valor;
+    const qtdTotal = ing.quantidade * parseInt(document.getElementById('quantidade').value);
+    const precoTotal = precoUnit * qtdTotal;
 
-function atualizarDetalhes() {
-  const detalhes = document.getElementById('detalhes-receita');
-  if (!receitaSelecionada) return;
-  
-  let html = `<h2>${receitaSelecionada.nome}</h2><div id="lista-ingredientes"></div>`;
-  detalhes.innerHTML = html;
-  
+    const div = document.createElement('div');
+    div.classList.add('ingrediente');
+    div.innerHTML = `
+      <img src="${itemInfo.sprite}" alt="">
+      ${itemInfo.nome} - ${qtdTotal}x (${ing.quantidade} base) × ₿${precoUnit} = ₿${precoTotal}
+    `;
+    detalhes.appendChild(div);
+  });
+
   calcularTotais();
 }
 
 function calcularTotais() {
-  if (!receitaSelecionada) return;
-  
-  const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+  if (!receitaAtual) return;
   let total = 0;
-  const listaIng = document.getElementById('lista-ingredientes');
-  listaIng.innerHTML = '';
-  
-  receitaSelecionada.ingredientes.forEach(ing => {
+  receitaAtual.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
     if (itemInfo) {
-      const qtdTotal = ing.quantidade * quantidade;
-      const precoUnit = itemInfo.valor;
-      const precoTotal = precoUnit * qtdTotal;
-      total += precoTotal;
-      
-      const div = document.createElement('div');
-      div.className = 'ingrediente';
-      div.innerHTML = `
-        <img src="${itemInfo.sprite}" alt="${itemInfo.nome}">
-        ${itemInfo.nome} - ${qtdTotal}x (${ing.quantidade} base) × R$ ${precoUnit} = R$ ${precoTotal}
-      `;
-      listaIng.appendChild(div);
+      total += itemInfo.valor * ing.quantidade * parseInt(document.getElementById('quantidade').value);
     }
   });
+  document.getElementById('valorTotal').value = `₿${total}`;
   
-  document.getElementById('valor-total').textContent = `R$ ${total}`;
-  
-  const precoVenda = parseFloat(document.getElementById('preco-venda').value) || 0;
-  document.getElementById('lucro').textContent = `R$ ${precoVenda - total}`;
+  const venda = parseFloat(document.getElementById('valorVenda').value) || 0;
+  document.getElementById('lucro').value = `₿${venda - total}`;
 }
 
-document.getElementById('quantidade').addEventListener('input', calcularTotais);
-document.getElementById('preco-venda').addEventListener('input', calcularTotais);
+document.getElementById('quantidade').addEventListener('input', () => selecionarReceita(receitaAtual));
+document.getElementById('valorVenda').addEventListener('input', calcularTotais);
 
-// Alternar modo noturno
-document.getElementById('toggle-dark').addEventListener('click', () => {
+document.getElementById('modoBtn').addEventListener('click', () => {
   document.body.classList.toggle('dark');
-  document.getElementById('toggle-dark').textContent = 
-    document.body.classList.contains('dark') ? "☀️ Modo Claro" : "🌙 Modo Noturno";
 });
 </script>
-
 </body>
 </html>
