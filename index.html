@@ -141,17 +141,25 @@ function selecionarReceita(receita) {
   document.getElementById('nome-receita').innerText = receita.nome;
   const listaIng = document.getElementById('ingredientes-lista');
   listaIng.innerHTML = '';
+  const qtd = parseInt(document.getElementById('qtd').value) || 1;
+
   receita.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
     if (!itemInfo) return;
+
+    const qtdTotal = ing.quantidade * qtd;
+    const precoUnit = itemInfo.valor;
+    const precoTotal = precoUnit * qtdTotal;
+
     const div = document.createElement('div');
     div.className = 'ingrediente';
     div.innerHTML = `
       <img src="${itemInfo.sprite}" alt="">
-      <span>${itemInfo.nome} - ${ing.quantidade} base</span>
+      <span>${itemInfo.nome} — ${qtdTotal}x (${ing.quantidade} base) × Ƀ ${precoUnit.toLocaleString('pt-BR')} = Ƀ ${precoTotal.toLocaleString('pt-BR')}</span>
     `;
     listaIng.appendChild(div);
   });
+
   atualizarCusto();
 }
 
@@ -181,3 +189,4 @@ document.getElementById('toggle-dark').addEventListener('click', () => {
 
 </body>
 </html>
+
