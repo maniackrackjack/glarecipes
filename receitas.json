@@ -1,0 +1,238 @@
+[
+  {
+    "nome": "Steak and Egg Skillet",
+    "level": 70,
+    "ingredientes": [
+      { "id": 1, "quantidade": 3 },
+      { "id": 9, "quantidade": 2 },
+      { "id": 11, "quantidade": 1 },
+      { "id": 19, "quantidade": 4 },
+      { "id": 20, "quantidade": 2 },
+      { "id": 24, "quantidade": 1 }
+    ]
+  },
+  {
+    "nome": "Italian Salad",
+    "level": 70,
+    "ingredientes": [
+      { "id": 11, "quantidade": 1 },
+      { "id": 12, "quantidade": 5 },
+      { "id": 13, "quantidade": 3 },
+      { "id": 18, "quantidade": 5 },
+      { "id": 19, "quantidade": 1 },
+      { "id": 23, "quantidade": 2 },
+      { "id": 24, "quantidade": 1 }
+    ]
+  },
+  {
+    "nome": "Meat Medallion",
+    "level": 80,
+    "ingredientes": [
+      { "id": 1, "quantidade": 3 },
+      { "id": 8, "quantidade": 8 },
+      { "id": 11, "quantidade": 1 },
+      { "id": 14, "quantidade": 2 },
+      { "id": 15, "quantidade": 4 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 22, "quantidade": 1 },
+      { "id": 23, "quantidade": 4 },
+      { "id": 24, "quantidade": 3 }
+    ]
+  },
+  {
+    "nome": "Gourmet Meat Skewer",
+    "level": 80,
+    "ingredientes": [
+      { "id": 1, "quantidade": 4 },
+      { "id": 8, "quantidade": 5 },
+      { "id": 11, "quantidade": 3 },
+      { "id": 16, "quantidade": 1 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 20, "quantidade": 3 },
+      { "id": 24, "quantidade": 3 },
+      { "id": 25, "quantidade": 4 }
+    ]
+  },
+  {
+    "nome": "Rabbit Curry",
+    "level": 90,
+    "ingredientes": [
+      { "id": 4, "quantidade": 5 },
+      { "id": 9, "quantidade": 1 },
+      { "id": 13, "quantidade": 2 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 20, "quantidade": 2 },
+      { "id": 22, "quantidade": 1 },
+      { "id": 24, "quantidade": 2 },
+      { "id": 25, "quantidade": 1 }
+    ]
+  },
+  {
+    "nome": "Shrimp Scampi",
+    "level": 90,
+    "ingredientes": [
+      { "id": 3, "quantidade": 4 },
+      { "id": 10, "quantidade": 1 },
+      { "id": 11, "quantidade": 2 },
+      { "id": 14, "quantidade": 2 },
+      { "id": 16, "quantidade": 1 },
+      { "id": 18, "quantidade": 1 },
+      { "id": 19, "quantidade": 1 },
+      { "id": 20, "quantidade": 2 },
+      { "id": 22, "quantidade": 4 },
+      { "id": 24, "quantidade": 3 }
+    ]
+  },
+  {
+    "nome": "Oyster Stew",
+    "level": 100,
+    "ingredientes": [
+      { "id": 7, "quantidade": 3 },
+      { "id": 10, "quantidade": 2 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 20, "quantidade": 2 },
+      { "id": 22, "quantidade": 1 },
+      { "id": 25, "quantidade": 1 },
+      { "id": 26, "quantidade": 1 }
+    ]
+  },
+  {
+    "nome": "Seafood Paella",
+    "level": 100,
+    "ingredientes": [
+      { "id": 2, "quantidade": 3 },
+      { "id": 3, "quantidade": 5 },
+      { "id": 5, "quantidade": 1 },
+      { "id": 11, "quantidade": 1 },
+      { "id": 13, "quantidade": 1 },
+      { "id": 15, "quantidade": 3 },
+      { "id": 19, "quantidade": 1 },
+      { "id": 20, "quantidade": 1 },
+      { "id": 21, "quantidade": 2 },
+      { "id": 24, "quantidade": 1 }
+    ]
+  },
+  {
+    "nome": "Grilled Tuna",
+    "level": 110,
+    "ingredientes": [
+      { "id": 6, "quantidade": 5 },
+      { "id": 10, "quantidade": 2 },
+      { "id": 11, "quantidade": 2 },
+      { "id": 12, "quantidade": 4 },
+      { "id": 14, "quantidade": 2 },
+      { "id": 16, "quantidade": 1 },
+      { "id": 20, "quantidade": 2 },
+      { "id": 22, "quantidade": 2 },
+      { "id": 24, "quantidade": 2 }
+    ]
+  },
+  {
+    "nome": "Wagyu Beef",
+    "level": 110,
+    "ingredientes": [
+      { "id": 1, "quantidade": 6 },
+      { "id": 11, "quantidade": 4 },
+      { "id": 14, "quantidade": 2 },
+      { "id": 16, "quantidade": 1 },
+      { "id": 17, "quantidade": 5 },
+      { "id": 18, "quantidade": 2 },
+      { "id": 19, "quantidade": 4 },
+      { "id": 20, "quantidade": 3 },
+      { "id": 22, "quantidade": 2 },
+      { "id": 24, "quantidade": 6 },
+      { "id": 25, "quantidade": 3 }
+    ]
+  },
+  {
+    "nome": "Octopus Skewer",
+    "level": 120,
+    "ingredientes": [
+      { "id": 19, "quantidade": 4 },
+      { "id": 20, "quantidade": 1 },
+      { "id": 22, "quantidade": 2 },
+      { "id": 24, "quantidade": 2 },
+      { "id": 25, "quantidade": 1 },
+      { "id": 30, "quantidade": 3 }
+    ]
+  },
+  {
+    "nome": "Crab Soup",
+    "level": 120,
+    "ingredientes": [
+      { "id": 11, "quantidade": 3 },
+      { "id": 13, "quantidade": 6 },
+      { "id": 15, "quantidade": 9 },
+      { "id": 18, "quantidade": 2 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 20, "quantidade": 4 },
+      { "id": 25, "quantidade": 3 },
+      { "id": 27, "quantidade": 13 },
+      { "id": 28, "quantidade": 3 },
+      { "id": 29, "quantidade": 4 }
+    ]
+  },
+  {
+    "nome": "Lamb Meat",
+    "level": 130,
+    "ingredientes": [
+      { "id": 11, "quantidade": 2 },
+      { "id": 14, "quantidade": 1 },
+      { "id": 16, "quantidade": 1 },
+      { "id": 17, "quantidade": 2 },
+      { "id": 18, "quantidade": 1 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 20, "quantidade": 1 },
+      { "id": 22, "quantidade": 2 },
+      { "id": 24, "quantidade": 3 },
+      { "id": 25, "quantidade": 2 },
+      { "id": 32, "quantidade": 1 }
+    ]
+  },
+  {
+    "nome": "Grilled Octopus",
+    "level": 130,
+    "ingredientes": [
+      { "id": 11, "quantidade": 3 },
+      { "id": 13, "quantidade": 6 },
+      { "id": 18, "quantidade": 1 },
+      { "id": 19, "quantidade": 4 },
+      { "id": 22, "quantidade": 2 },
+      { "id": 24, "quantidade": 2 },
+      { "id": 25, "quantidade": 2 },
+      { "id": 26, "quantidade": 3 },
+      { "id": 28, "quantidade": 3 },
+      { "id": 30, "quantidade": 5 }
+    ]
+  },
+  {
+    "nome": "Teriyaki Chicken",
+    "level": 140,
+    "ingredientes": [
+      { "id": 11, "quantidade": 3 },
+      { "id": 13, "quantidade": 3 },
+      { "id": 18, "quantidade": 3 },
+      { "id": 19, "quantidade": 2 },
+      { "id": 20, "quantidade": 1 },
+      { "id": 22, "quantidade": 3 },
+      { "id": 24, "quantidade": 6 },
+      { "id": 26, "quantidade": 3 },
+      { "id": 31, "quantidade": 5 }
+    ]
+  },
+  {
+    "nome": "Shrimp Paella",
+    "level": 140,
+    "ingredientes": [
+      { "id": 3, "quantidade": 8 },
+      { "id": 11, "quantidade": 1 },
+      { "id": 13, "quantidade": 1 },
+      { "id": 15, "quantidade": 3 },
+      { "id": 18, "quantidade": 3 },
+      { "id": 19, "quantidade": 1 },
+      { "id": 20, "quantidade": 1 },
+      { "id": 21, "quantidade": 2 },
+      { "id": 24, "quantidade": 1 }
+    ]
+  }
+]

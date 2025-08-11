@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora de Receitas</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+  .lista-receitas {
+    border: 2px solid red;
+    width: 200px;
+    padding: 10px;
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+  .lista-receitas div {
+    cursor: pointer;
+    padding: 5px;
+  }
+  .lista-receitas div:hover {
+    background-color: #f8d7da;
+  }
+  .painel-receita {
+    border: 2px solid blue;
+    flex: 1;
+    padding: 10px;
+  }
+  .painel-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 200px;
+  }
+  .painel-info div {
+    border: 2px solid blue;
+    padding: 5px;
+  }
+  .painel-info input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+</style>
+</head>
+<body>
+
+<div class="lista-receitas" id="listaReceitas"></div>
+
+<div class="painel-receita" id="painelReceita">
+  <h3>Selecione uma receita</h3>
+</div>
+
+<div class="painel-info">
+  <div>
+    Quantidade:<br>
+    <input type="number" id="quantidade" min="1" max="100" value="1">
+  </div>
+  <div>
+    Valor total:<br>
+    <span id="valorTotal">0</span>
+  </div>
+  <div>
+    Valor de venda:<br>
+    <input type="number" id="valorVenda" step="0.01">
+  </div>
+  <div>
+    Lucro:<br>
+    <span id="lucro">0</span>
+  </div>
+</div>
+
+<script>
+let receitas = [];
+let itens = {};
+let receitaSelecionada = null;
+
+async function carregarDados() {
+  const resItens = await fetch('itens.json');
+  itens = await resItens.json();
+  
+  const resReceitas = await fetch('receitas.json');
+  receitas = await resReceitas.json();
+  
+  montarListaReceitas();
+}
+
+function montarListaReceitas() {
+  const lista = document.getElementById('listaReceitas');
+  lista.innerHTML = '';
+  receitas.forEach((r, idx) => {
+    const div = document.createElement('div');
+    div.textContent = r.nome;
+    div.onclick = () => selecionarReceita(idx);
+    lista.appendChild(div);
+  });
+}
+
+function selecionarReceita(index) {
+  receitaSelecionada = receitas[index];
+  const painel = document.getElementById('painelReceita');
+  painel.innerHTML = `<h3>${receitaSelecionada.nome}</h3>`;
+  
+  const ul = document.createElement('ul');
+  receitaSelecionada.ingredientes.forEach(ing => {
+    const item = itens.find(i => i.id === ing.id);
+    const li = document.createElement('li');
+    li.textContent = `${item.nome} - ${ing.qtd} x ${item.preco} = R$ ${(ing.qtd * item.preco).toFixed(2)}`;
+    ul.appendChild(li);
+  });
+  painel.appendChild(ul);
+  
+  atualizarValores();
+}
+
+function atualizarValores() {
+  if (!receitaSelecionada) return;
+  const qtd = parseInt(document.getElementById('quantidade').value);
+  let custo = 0;
+  receitaSelecionada.ingredientes.forEach(ing => {
+    const item = itens.find(i => i.id === ing.id);
+    custo += ing.qtd * item.preco;
+  });
+  custo = custo * qtd;
+  
+  document.getElementById('valorTotal').textContent = custo.toFixed(2);
+  
+  const venda = parseFloat(document.getElementById('valorVenda').value) || 0;
+  const lucro = venda - custo;
+  document.getElementById('lucro').textContent = lucro.toFixed(2);
+}
+
+document.getElementById('quantidade').addEventListener('input', atualizarValores);
+document.getElementById('valorVenda').addEventListener('input', atualizarValores);
+
+carregarDados();
+</script>
+
+</body>
+</html>
