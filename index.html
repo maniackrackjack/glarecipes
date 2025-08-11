@@ -5,137 +5,216 @@
 <title>Calculadora de Receitas</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
     display: flex;
-    gap: 20px;
-    padding: 20px;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    margin: 0;
+    color: #000;
   }
-  .lista-receitas {
-    border: 2px solid red;
-    width: 200px;
+  #lista-receitas {
+    width: 25%;
+    background: #ffcccc;
     padding: 10px;
     overflow-y: auto;
-    max-height: 90vh;
+    border-right: 2px solid #aaa;
   }
-  .lista-receitas div {
+  #lista-receitas div {
+    padding: 8px;
+    margin: 5px 0;
+    background: white;
     cursor: pointer;
-    padding: 5px;
+    border-radius: 4px;
   }
-  .lista-receitas div:hover {
-    background-color: #f8d7da;
+  #lista-receitas div:hover {
+    background: #ffe6e6;
   }
-  .painel-receita {
-    border: 2px solid blue;
+  #detalhes-receita {
     flex: 1;
-    padding: 10px;
+    padding: 15px;
+    background: #cce5ff;
   }
-  .painel-info {
+  .ingrediente {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-width: 200px;
-  }
-  .painel-info div {
-    border: 2px solid blue;
+    align-items: center;
+    margin-bottom: 8px;
+    background: #fff;
     padding: 5px;
+    border-radius: 4px;
   }
-  .painel-info input {
-    width: 100%;
-    box-sizing: border-box;
+  .ingrediente img {
+    width: 32px;
+    height: 32px;
+    margin-right: 10px;
+  }
+  #painel-calculo {
+    width: 250px;
+    background: #e6e6e6;
+    padding: 10px;
+    border-left: 2px solid #aaa;
+  }
+  .painel-box {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+  }
+
+  /* -------- MODO NOTURNO -------- */
+  body.dark {
+    background: #1e1e1e;
+    color: #f5f5f5;
+  }
+  body.dark #lista-receitas {
+    background: #442222;
+    border-color: #666;
+  }
+  body.dark #lista-receitas div {
+    background: #333;
+    color: #f5f5f5;
+  }
+  body.dark #lista-receitas div:hover {
+    background: #555;
+  }
+  body.dark #detalhes-receita {
+    background: #223344;
+  }
+  body.dark .ingrediente {
+    background: #2a2a2a;
+  }
+  body.dark #painel-calculo {
+    background: #2d2d2d;
+    border-color: #555;
+  }
+  body.dark .painel-box {
+    background: #3a3a3a;
+    color: #f5f5f5;
+  }
+  /* Botão modo noturno */
+  #toggle-dark {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  body.dark #toggle-dark {
+    background: #ddd;
+    color: black;
   }
 </style>
 </head>
 <body>
 
-<div class="lista-receitas" id="listaReceitas"></div>
+<button id="toggle-dark">🌙 Modo Noturno</button>
 
-<div class="painel-receita" id="painelReceita">
-  <h3>Selecione uma receita</h3>
+<div id="lista-receitas"></div>
+<div id="detalhes-receita">
+  <h2>Selecione uma receita</h2>
 </div>
-
-<div class="painel-info">
-  <div>
-    Quantidade:<br>
-    <input type="number" id="quantidade" min="1" max="100" value="1">
+<div id="painel-calculo">
+  <div class="painel-box">
+    <label>Quantidade:</label>
+    <input type="number" id="quantidade" value="1" min="1" max="100">
   </div>
-  <div>
-    Valor total:<br>
-    <span id="valorTotal">0</span>
+  <div class="painel-box">
+    <label>Valor total da receita:</label>
+    <div id="valor-total">R$ 0</div>
   </div>
-  <div>
-    Valor de venda:<br>
-    <input type="number" id="valorVenda" step="0.01">
+  <div class="painel-box">
+    <label>Preço de venda:</label>
+    <input type="number" id="preco-venda" value="0">
   </div>
-  <div>
-    Lucro:<br>
-    <span id="lucro">0</span>
+  <div class="painel-box">
+    <label>Lucro:</label>
+    <div id="lucro">R$ 0</div>
   </div>
 </div>
 
 <script>
+let itens = [];
 let receitas = [];
-let itens = {};
 let receitaSelecionada = null;
 
-async function carregarDados() {
-  const resItens = await fetch('itens.json');
-  itens = await resItens.json();
-  
-  const resReceitas = await fetch('receitas.json');
-  receitas = await resReceitas.json();
-  
-  montarListaReceitas();
-}
+Promise.all([
+  fetch('itens.json').then(res => res.json()),
+  fetch('receitas.json').then(res => res.json())
+]).then(([itensData, receitasData]) => {
+  itens = itensData;
+  receitas = receitasData;
+  mostrarListaReceitas();
+});
 
-function montarListaReceitas() {
-  const lista = document.getElementById('listaReceitas');
+function mostrarListaReceitas() {
+  const lista = document.getElementById('lista-receitas');
   lista.innerHTML = '';
-  receitas.forEach((r, idx) => {
+  receitas.forEach((r, index) => {
     const div = document.createElement('div');
-    div.textContent = r.nome;
-    div.onclick = () => selecionarReceita(idx);
+    div.textContent = `${r.nome} (Lv ${r.level})`;
+    div.onclick = () => selecionarReceita(index);
     lista.appendChild(div);
   });
 }
 
 function selecionarReceita(index) {
   receitaSelecionada = receitas[index];
-  const painel = document.getElementById('painelReceita');
-  painel.innerHTML = `<h3>${receitaSelecionada.nome}</h3>`;
-  
-  const ul = document.createElement('ul');
-  receitaSelecionada.ingredientes.forEach(ing => {
-    const item = itens.find(i => i.id === ing.id);
-    const li = document.createElement('li');
-    li.textContent = `${item.nome} - ${ing.qtd} x ${item.preco} = R$ ${(ing.qtd * item.preco).toFixed(2)}`;
-    ul.appendChild(li);
-  });
-  painel.appendChild(ul);
-  
-  atualizarValores();
+  atualizarDetalhes();
 }
 
-function atualizarValores() {
+function atualizarDetalhes() {
+  const detalhes = document.getElementById('detalhes-receita');
   if (!receitaSelecionada) return;
-  const qtd = parseInt(document.getElementById('quantidade').value);
-  let custo = 0;
-  receitaSelecionada.ingredientes.forEach(ing => {
-    const item = itens.find(i => i.id === ing.id);
-    custo += ing.qtd * item.preco;
-  });
-  custo = custo * qtd;
   
-  document.getElementById('valorTotal').textContent = custo.toFixed(2);
+  let html = `<h2>${receitaSelecionada.nome}</h2><div id="lista-ingredientes"></div>`;
+  detalhes.innerHTML = html;
   
-  const venda = parseFloat(document.getElementById('valorVenda').value) || 0;
-  const lucro = venda - custo;
-  document.getElementById('lucro').textContent = lucro.toFixed(2);
+  calcularTotais();
 }
 
-document.getElementById('quantidade').addEventListener('input', atualizarValores);
-document.getElementById('valorVenda').addEventListener('input', atualizarValores);
+function calcularTotais() {
+  if (!receitaSelecionada) return;
+  
+  const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+  let total = 0;
+  const listaIng = document.getElementById('lista-ingredientes');
+  listaIng.innerHTML = '';
+  
+  receitaSelecionada.ingredientes.forEach(ing => {
+    const itemInfo = itens.find(i => i.id === ing.id);
+    if (itemInfo) {
+      const qtdTotal = ing.quantidade * quantidade;
+      const precoUnit = itemInfo.valor;
+      const precoTotal = precoUnit * qtdTotal;
+      total += precoTotal;
+      
+      const div = document.createElement('div');
+      div.className = 'ingrediente';
+      div.innerHTML = `
+        <img src="${itemInfo.sprite}" alt="${itemInfo.nome}">
+        ${itemInfo.nome} - ${qtdTotal}x (${ing.quantidade} base) × R$ ${precoUnit} = R$ ${precoTotal}
+      `;
+      listaIng.appendChild(div);
+    }
+  });
+  
+  document.getElementById('valor-total').textContent = `R$ ${total}`;
+  
+  const precoVenda = parseFloat(document.getElementById('preco-venda').value) || 0;
+  document.getElementById('lucro').textContent = `R$ ${precoVenda - total}`;
+}
 
-carregarDados();
+document.getElementById('quantidade').addEventListener('input', calcularTotais);
+document.getElementById('preco-venda').addEventListener('input', calcularTotais);
+
+// Alternar modo noturno
+document.getElementById('toggle-dark').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  document.getElementById('toggle-dark').textContent = 
+    document.body.classList.contains('dark') ? "☀️ Modo Claro" : "🌙 Modo Noturno";
+});
 </script>
 
 </body>
