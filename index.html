@@ -18,16 +18,24 @@
   }
   .lista-receitas {
     border: 2px solid red;
-    width: 200px;
+    width: 220px;
     padding: 5px;
     overflow-y: auto;
   }
   .lista-receitas div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     padding: 5px;
     cursor: pointer;
   }
   .lista-receitas div:hover {
     background: rgba(255,0,0,0.2);
+  }
+  .lista-receitas img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
   }
   .detalhes-receita {
     border: 2px solid blue;
@@ -40,6 +48,7 @@
     flex-direction: column;
     gap: 10px;
     padding: 10px;
+    width: 200px;
   }
   .painel-direito input {
     padding: 5px;
@@ -49,11 +58,11 @@
     display: flex;
     align-items: center;
     margin-bottom: 8px;
+    gap: 8px;
   }
   .ingrediente img {
     width: 32px;
     height: 32px;
-    margin-right: 10px;
     object-fit: contain;
   }
   .modo-btn {
@@ -93,7 +102,13 @@ function carregarListaReceitas() {
   lista.innerHTML = '';
   receitas.forEach(r => {
     const div = document.createElement('div');
-    div.textContent = r.nome;
+    const img = document.createElement('img');
+    img.src = r.sprite;
+    img.alt = r.nome;
+    const span = document.createElement('span');
+    span.textContent = r.nome;
+    div.appendChild(img);
+    div.appendChild(span);
     div.onclick = () => selecionarReceita(r);
     lista.appendChild(div);
   });
@@ -102,7 +117,7 @@ function carregarListaReceitas() {
 function selecionarReceita(receita) {
   receitaAtual = receita;
   const detalhes = document.getElementById('detalhesReceita');
-  detalhes.innerHTML = `<h2>${receita.nome}</h2>`;
+  detalhes.innerHTML = `<h2><img src="${receita.sprite}" alt="" style="width:48px;height:48px;vertical-align:middle;"> ${receita.nome}</h2>`;
   
   receita.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
@@ -115,7 +130,7 @@ function selecionarReceita(receita) {
     div.classList.add('ingrediente');
     div.innerHTML = `
       <img src="${itemInfo.sprite}" alt="">
-      ${itemInfo.nome} - ${qtdTotal}x (${ing.quantidade} base) × ₿${precoUnit} = ₿${precoTotal}
+      ${itemInfo.nome} - ${qtdTotal}x (${ing.quantidade} base) × ₿${precoUnit.toLocaleString('pt-BR')} = ₿${precoTotal.toLocaleString('pt-BR')}
     `;
     detalhes.appendChild(div);
   });
@@ -132,10 +147,10 @@ function calcularTotais() {
       total += itemInfo.valor * ing.quantidade * parseInt(document.getElementById('quantidade').value);
     }
   });
-  document.getElementById('valorTotal').value = `₿${total}`;
+  document.getElementById('valorTotal').value = `₿${total.toLocaleString('pt-BR')}`;
   
   const venda = parseFloat(document.getElementById('valorVenda').value) || 0;
-  document.getElementById('lucro').value = `₿${venda - total}`;
+  document.getElementById('lucro').value = `₿${(venda - total).toLocaleString('pt-BR')}`;
 }
 
 document.getElementById('quantidade').addEventListener('input', () => selecionarReceita(receitaAtual));
