@@ -1,193 +1,293 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8" />
 <title>Helper de Receitas</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    height: 100vh;
-    margin: 0;
-    background: #f4f4f4;
-    color: #333;
+  :root{
+    --mid-bg: #2e231f;   /* fundo do meio (requisitado) */
+    --left-bg: #4b3a33;  /* variação mais clara */
+    --right-bg: #6b564c; /* variação mais clara */
+    --text: #f4f4f4;
+    --accent: #ffcc00;   /* destaque qtd */
+    --muted: #bfb0a6;
   }
+  body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    font-family: Arial, sans-serif;
+    background: var(--left-bg);
+    color: var(--text);
+  }
+
+  /* esquerda - lista de receitas */
   #lista-receitas {
     flex: 1;
-    background: #d5c4bc;
-    overflow-y: auto;
-    padding: 10px;
+    background: var(--left-bg);
+    overflow-y:auto;
+    padding: 12px;
+    box-sizing: border-box;
   }
   .receita-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 5px;
-    border-bottom: 1px solid #b9a89e;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:8px;
+    border-bottom:1px solid rgba(0,0,0,0.12);
+    cursor:pointer;
   }
-  .receita-item img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-  }
+  .receita-item img { width:44px; height:44px; object-fit:contain; background:transparent; border-radius:6px; }
+
+  .receita-nome { font-weight:700; }
+  .receita-meta { font-size:13px; color: var(--muted); margin-left:54px; margin-top:-6px; }
+
+  /* meio - detalhes */
   #detalhes {
     flex: 2;
-    background: #2e231f;
-    padding: 10px;
-    overflow-y: auto;
+    background: var(--mid-bg);
+    padding: 14px;
+    box-sizing: border-box;
+    overflow-y:auto;
   }
+  #nome-receita { margin:0 0 8px 0; font-size:20px; }
+
   .ingrediente {
-    background: #3c2d28;
-    padding: 5px;
-    border-radius: 5px;
-    margin-bottom: 5px;
+    background: rgba(255,255,255,0.03);
+    padding:8px;
+    border-radius:6px;
+    margin-bottom:8px;
   }
+
   .ingrediente-top {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display:flex;
+    align-items:center;
+    gap:10px;
   }
-  .ingrediente-top img {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-  }
-  .qtd-base {
-    color: #ccc;
-  }
-  .nome {
-    color: #fff;
-    font-weight: bold;
-  }
+  .ingrediente-top img { width:32px; height:32px; object-fit:contain; background:transparent; border-radius:4px; }
+
+  .qtd-base { color:var(--muted); margin-right:6px; }
+  .nome { font-weight:700; color:var(--text); margin-right:8px; }
+
   .qtd-desejada {
-    color: #ffcc00;
-    font-size: 1.1em;
-    font-weight: bold;
+    color: var(--accent);
+    font-weight:700;
+    font-size:1.05em;
+    margin-left:auto; /* empurra para a direita */
   }
+
   .ingrediente-valores {
-    font-size: 0.85em;
-    color: #aaa;
-    margin-left: 38px;
+    font-size:13px;
+    color: var(--muted);
+    margin-left:46px; /* alinha com texto (após sprite) */
+    margin-top:6px;
   }
+
+  /* direita - painel */
   #painel {
     flex: 1;
-    background: #e6d4c8;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    background: var(--right-bg);
+    padding:12px;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
   }
   .painel-box {
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
+    background: rgba(0,0,0,0.05);
+    padding:10px;
+    border-radius:8px;
+    color: var(--text);
   }
-  input[type="number"] {
-    width: 100%;
-    padding: 5px;
+  input[type="number"]{ width:100%; padding:8px; border-radius:6px; border: none; outline:none; font-size:14px; }
+
+  .small-muted { color: var(--muted); font-size:13px; }
+
+  /* responsivo simples */
+  @media(max-width:900px){
+    body { flex-direction: column; height: auto; }
+    #lista-receitas, #detalhes, #painel { width:100%; }
+    .receita-meta { margin-left:0; margin-top:4px; }
+    .qtd-desejada { margin-left:8px; }
+    .ingrediente-valores { margin-left:42px; }
   }
 </style>
 </head>
 <body>
 
-<div id="lista-receitas"></div>
+  <div id="lista-receitas" aria-label="Lista de receitas"></div>
 
-<div id="detalhes">
-  <h2 id="nome-receita"></h2>
-  <div id="ingredientes-lista"></div>
-</div>
-
-<div id="painel">
-  <div class="painel-box">
-    Quantidade:
-    <input type="number" id="qtd" min="1" max="100" value="1">
+  <div id="detalhes">
+    <h2 id="nome-receita">Selecione uma receita</h2>
+    <div id="ingredientes-lista"></div>
   </div>
-  <div class="painel-box">Custo unitário: <span id="custo-unit">Ƀ 0</span></div>
-  <div class="painel-box">Custo total: <span id="custo-total">Ƀ 0</span></div>
-  <div class="painel-box">Preço de venda: <input type="number" id="preco-venda" value="0"></div>
-  <div class="painel-box">Lucro: <span id="lucro">Ƀ 0</span></div>
-</div>
+
+  <div id="painel" aria-label="Painel de cálculos">
+    <div class="painel-box small-muted">
+      Quantidade (1–100)
+      <input type="number" id="qtd" min="1" max="100" value="1">
+    </div>
+
+    <div class="painel-box small-muted">
+      Custo unitário (1 unidade): <strong id="custo-unit">Ƀ 0</strong>
+    </div>
+
+    <div class="painel-box small-muted">
+      Custo total: <strong id="custo-total">Ƀ 0</strong>
+    </div>
+
+    <div class="painel-box small-muted">
+      Preço de venda (por unidade)
+      <input type="number" id="preco-venda" value="0" step="0.01" min="0">
+    </div>
+
+    <div class="painel-box small-muted">
+      Lucro: <strong id="lucro">Ƀ 0</strong>
+    </div>
+  </div>
 
 <script>
+/* util */
+const FMT = new Intl.NumberFormat('pt-BR');
+const MON = 'Ƀ';
+function money(n){ n = Number(n)||0; return MON + ' ' + FMT.format(Math.round(n)); }
+
+/* dados carregados */
 let itens = [];
 let receitas = [];
 let receitaSelecionada = null;
 
-fetch('itens.json')
-  .then(res => res.json())
-  .then(data => {
-    itens = data;
-    return fetch('receitas.json');
-  })
-  .then(res => res.json())
-  .then(data => {
-    receitas = data;
-    carregarReceitas();
-  });
+async function carregar(){
+  try{
+    const r1 = await fetch('itens.json');
+    if(!r1.ok) throw new Error('itens.json não encontrado / erro HTTP');
+    itens = await r1.json();
 
-function carregarReceitas() {
+    const r2 = await fetch('receitas.json');
+    if(!r2.ok) throw new Error('receitas.json não encontrado / erro HTTP');
+    receitas = await r2.json();
+
+    montarListaReceitas();
+  }catch(err){
+    alert('Erro ao carregar arquivos: ' + err.message + '\nVer console para mais detalhes.');
+    console.error(err);
+  }
+}
+
+/* monta lista esquerda: usa r.level e r.cooldown vindos do receitas.json */
+function montarListaReceitas(){
   const lista = document.getElementById('lista-receitas');
   lista.innerHTML = '';
-  receitas.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'receita-item';
-    div.innerHTML = `<img src="${r.sprite}" alt=""> <span>${r.level} (${r.cooldown}s) - ${r.nome}</span>`;
-    div.onclick = () => selecionarReceita(r);
-    lista.appendChild(div);
+  receitas.forEach((r, idx) => {
+    const item = document.createElement('div');
+    item.className = 'receita-item';
+    const img = document.createElement('img');
+    img.src = r.sprite || '';
+    img.alt = r.nome;
+    img.onerror = () => { img.style.background='#887'; img.src=''; };
+    const txt = document.createElement('div');
+    txt.innerHTML = `<div class="receita-nome">${r.nome}</div>
+                     <div class="receita-meta">Nível ${r.level ?? '—'} — ${r.cooldown ?? '—'}s</div>`;
+    item.appendChild(img);
+    item.appendChild(txt);
+    item.onclick = () => selecionarReceita(r);
+    lista.appendChild(item);
   });
 }
 
-function selecionarReceita(receita) {
-  receitaSelecionada = receita;
-  document.getElementById('nome-receita').innerText = receita.nome;
-  const listaIng = document.getElementById('ingredientes-lista');
-  listaIng.innerHTML = '';
-  const qtd = parseInt(document.getElementById('qtd').value) || 1;
-  receita.ingredientes.forEach(ing => {
-    const itemInfo = itens.find(i => i.id === ing.id);
-    if (!itemInfo) return;
+/* render ingredientes (duas linhas) */
+function renderIngredientes(){
+  const box = document.getElementById('ingredientes-lista');
+  box.innerHTML = '';
+  if(!receitaSelecionada) return;
+  const qtd = Number(document.getElementById('qtd').value) || 1;
+
+  receitaSelecionada.ingredientes.forEach(ing => {
+    const itemInfo = itens.find(it => Number(it.id) === Number(ing.id));
     const div = document.createElement('div');
     div.className = 'ingrediente';
-    div.innerHTML = `
-      <div class="ingrediente-top">
-        <img src="${itemInfo.sprite}" alt="">
-        <span class="qtd-base">(${ing.quantidade})</span>
-        <strong class="nome">${itemInfo.nome}</strong>
-        <strong class="qtd-desejada">${ing.quantidade * qtd}</strong>
-      </div>
-      <div class="ingrediente-valores">
-        Ƀ ${itemInfo.valor.toLocaleString('pt-BR')} = Ƀ ${(itemInfo.valor * ing.quantidade * qtd).toLocaleString('pt-BR')}
-      </div>
-    `;
-    listaIng.appendChild(div);
+
+    const top = document.createElement('div');
+    top.className = 'ingrediente-top';
+
+    const img = document.createElement('img');
+    if(itemInfo && itemInfo.sprite){
+      img.src = itemInfo.sprite;
+      img.onerror = () => { img.style.background='#887'; img.src=''; };
+    } else {
+      img.style.background = '#887';
+    }
+
+    const qtdBaseSpan = document.createElement('span');
+    qtdBaseSpan.className = 'qtd-base';
+    qtdBaseSpan.textContent = `(${ing.quantidade})`;
+
+    const nomeSpan = document.createElement('span');
+    nomeSpan.className = 'nome';
+    nomeSpan.textContent = itemInfo ? itemInfo.nome : `Item id ${ing.id} não encontrado`;
+
+    const qtdDesejadaSpan = document.createElement('span');
+    qtdDesejadaSpan.className = 'qtd-desejada';
+    const qtdTotal = Number(ing.quantidade) * qtd;
+    qtdDesejadaSpan.textContent = qtdTotal;
+
+    top.appendChild(img);
+    top.appendChild(qtdBaseSpan);
+    top.appendChild(nomeSpan);
+    top.appendChild(qtdDesejadaSpan);
+
+    const bottom = document.createElement('div');
+    bottom.className = 'ingrediente-valores';
+
+    const valorUnit = itemInfo ? Number(itemInfo.valor) || 0 : 0;
+    const valorTotal = valorUnit * qtdTotal;
+
+    bottom.textContent = `${MON} ${FMT.format(valorUnit)} = ${MON} ${FMT.format(Math.round(valorTotal))}`;
+
+    div.appendChild(top);
+    div.appendChild(bottom);
+    box.appendChild(div);
   });
-  atualizarCusto();
 }
 
-function atualizarCusto() {
-  if (!receitaSelecionada) return;
-  const qtd = parseInt(document.getElementById('qtd').value) || 1;
+/* selecionar receita */
+function selecionarReceita(r){
+  receitaSelecionada = r;
+  document.getElementById('nome-receita').textContent = r.nome;
+  renderIngredientes();
+  atualizarCusto(); // popula custos e lucro
+}
+
+/* calcula custo unitário (1 unidade), custo total (qtd) e lucro: (precoVendaUnit - custoUnit) * qtd */
+function atualizarCusto(){
+  if(!receitaSelecionada) return;
+  const qtd = Number(document.getElementById('qtd').value) || 1;
+  // custo unitário = soma(valor_unit * qtd_base)
   let custoUnit = 0;
   receitaSelecionada.ingredientes.forEach(ing => {
-    const itemInfo = itens.find(i => i.id === ing.id);
-    if (itemInfo) {
-      custoUnit += itemInfo.valor * ing.quantidade;
+    const it = itens.find(x => Number(x.id) === Number(ing.id));
+    if(it && Number.isFinite(Number(it.valor))) {
+      custoUnit += Number(it.valor) * Number(ing.quantidade);
     }
   });
   const custoTotal = custoUnit * qtd;
-  document.getElementById('custo-unit').innerText = "Ƀ " + custoUnit.toLocaleString('pt-BR');
-  document.getElementById('custo-total').innerText = "Ƀ " + custoTotal.toLocaleString('pt-BR');
+  document.getElementById('custo-unit').textContent = MON + ' ' + FMT.format(Math.round(custoUnit));
+  document.getElementById('custo-total').textContent = MON + ' ' + FMT.format(Math.round(custoTotal));
 
-  const precoVendaUnit = parseInt(document.getElementById('preco-venda').value) || 0;
-  const lucro = (precoVendaUnit - custoUnit) * qtd;
-  document.getElementById('lucro').innerText = "Ƀ " + lucro.toLocaleString('pt-BR');
+  const vendaUnit = Number(document.getElementById('preco-venda').value) || 0;
+  const lucro = (vendaUnit - custoUnit) * qtd;
+  document.getElementById('lucro').textContent = MON + ' ' + FMT.format(Math.round(lucro));
 
-  selecionarReceita(receitaSelecionada);
+  // atualiza lista no meio (qtd desejada e valores)
+  renderIngredientes();
 }
 
+/* listeners */
 document.getElementById('qtd').addEventListener('input', atualizarCusto);
 document.getElementById('preco-venda').addEventListener('input', atualizarCusto);
+
+/* start */
+carregar();
 </script>
 
 </body>
