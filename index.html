@@ -2,14 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<title>Helper de Receitas</title>
+<title>Helper de Receitas — Otimizado</title>
 <style>
   :root{
-    --mid-bg: #2e231f;   /* fundo do meio (requisitado) */
-    --left-bg: #4b3a33;  /* variação mais clara */
-    --right-bg: #6b564c; /* variação mais clara */
+    --mid-bg: #2e231f;
+    --left-bg: #4b3a33;
+    --right-bg: #6b564c;
     --text: #f4f4f4;
-    --accent: #ffcc00;   /* destaque qtd */
+    --accent: #ffcc00;
     --muted: #bfb0a6;
   }
   body{
@@ -50,7 +50,8 @@
     box-sizing: border-box;
     overflow-y:auto;
   }
-  #nome-receita { margin:0 0 8px 0; font-size:20px; }
+  #nome-receita { margin:0 0 4px 0; font-size:20px; }
+  #meta-receita { margin:0 0 10px 0; font-size:13px; color: var(--muted); }
 
   .ingrediente {
     background: rgba(255,255,255,0.03);
@@ -73,13 +74,13 @@
     color: var(--accent);
     font-weight:700;
     font-size:1.05em;
-    margin-left:auto; /* empurra para a direita */
+    margin-left:auto;
   }
 
   .ingrediente-valores {
     font-size:13px;
     color: var(--muted);
-    margin-left:46px; /* alinha com texto (após sprite) */
+    margin-left:46px;
     margin-top:6px;
   }
 
@@ -119,6 +120,7 @@
 
   <div id="detalhes">
     <h2 id="nome-receita">Selecione uma receita</h2>
+    <p id="meta-receita" class="small-muted"></p>
     <div id="ingredientes-lista"></div>
   </div>
 
@@ -147,21 +149,49 @@
   </div>
 
 <script>
-/* util */
+/* ===== util ===== */
 const FMT = new Intl.NumberFormat('pt-BR');
 const MON = 'Ƀ';
+const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 function money(n){ n = Number(n)||0; return MON + ' ' + FMT.format(Math.round(n)); }
 
-/* dados carregados */
+/* ===== dados ===== */
 let itens = [];
+let itensById = new Map();
 let receitas = [];
 let receitaSelecionada = null;
 
+/* ===== cache de sprites (carrega uma vez e reaproveita) ===== */
+const spriteCache = new Map(); // url -> Promise<string (objectURL|dataURL)>
+async function getSpriteURL(url){
+  if(!url) return '';
+  if(spriteCache.has(url)) return spriteCache.get(url);
+  const p = fetch(url)
+    .then(r => { if(!r.ok) throw new Error('HTTP'); return r.blob(); })
+    .then(blob => URL.createObjectURL(blob))
+    .catch(() => '');
+  spriteCache.set(url, p);
+  return p;
+}
+function setImg(imgEl, url){
+  if(!url){ imgEl.src=''; imgEl.style.background='#887'; return; }
+  getSpriteURL(url).then(src => {
+    if(src){ imgEl.src = src; imgEl.style.background='transparent'; }
+    else { imgEl.src=''; imgEl.style.background='#887'; }
+  });
+}
+
+/* ===== refs dinâmicos para atualização sem recriar elementos ===== */
+let ingredienteNodes = []; // [{ qtdBase, valorUnit, qtdDesejadaEl, valoresEl, valoresPrefix }]
+let custoUnitAtual = 0;
+
+/* ===== carregar dados ===== */
 async function carregar(){
   try{
     const r1 = await fetch('itens.json');
     if(!r1.ok) throw new Error('itens.json não encontrado / erro HTTP');
     itens = await r1.json();
+    itensById = new Map(itens.map(it => [Number(it.id), it]));
 
     const r2 = await fetch('receitas.json');
     if(!r2.ok) throw new Error('receitas.json não encontrado / erro HTTP');
@@ -174,20 +204,26 @@ async function carregar(){
   }
 }
 
-/* monta lista esquerda: usa r.level e r.cooldown vindos do receitas.json */
+/* ===== lista esquerda: inclui nível e cooldown ===== */
 function montarListaReceitas(){
   const lista = document.getElementById('lista-receitas');
   lista.innerHTML = '';
-  receitas.forEach((r, idx) => {
+  receitas.forEach((r) => {
     const item = document.createElement('div');
     item.className = 'receita-item';
+
     const img = document.createElement('img');
-    img.src = r.sprite || '';
-    img.alt = r.nome;
-    img.onerror = () => { img.style.background='#887'; img.src=''; };
+    img.alt = r.nome || 'Sprite da receita';
+    setImg(img, r.sprite);
+
     const txt = document.createElement('div');
-    txt.innerHTML = `<div class="receita-nome">${r.nome}</div>
-                     <div class="receita-meta">Nível ${r.level ?? '—'} — ${r.cooldown ?? '—'}s</div>`;
+    const nivel = (r.level ?? '—');
+    const cd = (r.cooldown ?? '—');
+    txt.innerHTML = `
+      <div class="receita-nome">${r.nome}</div>
+      <div class="receita-meta">Nível ${nivel} — ${cd}s</div>
+    `;
+
     item.appendChild(img);
     item.appendChild(txt);
     item.onclick = () => selecionarReceita(r);
@@ -195,98 +231,115 @@ function montarListaReceitas(){
   });
 }
 
-/* render ingredientes (duas linhas) */
-function renderIngredientes(){
+/* ===== construir ingredientes uma vez por seleção ===== */
+function construirIngredientes(r){
   const box = document.getElementById('ingredientes-lista');
   box.innerHTML = '';
-  if(!receitaSelecionada) return;
-  const qtd = Number(document.getElementById('qtd').value) || 1;
+  ingredienteNodes = [];
+  custoUnitAtual = 0;
 
-  receitaSelecionada.ingredientes.forEach(ing => {
-    const itemInfo = itens.find(it => Number(it.id) === Number(ing.id));
+  r.ingredientes.forEach(ing => {
+    const it = itensById.get(Number(ing.id));
+    const valorUnit = it ? Number(it.valor)||0 : 0;
+    const qtdBase = Number(ing.quantidade)||0;
+
+    // container
     const div = document.createElement('div');
     div.className = 'ingrediente';
 
+    // linha topo
     const top = document.createElement('div');
     top.className = 'ingrediente-top';
 
     const img = document.createElement('img');
-    if(itemInfo && itemInfo.sprite){
-      img.src = itemInfo.sprite;
-      img.onerror = () => { img.style.background='#887'; img.src=''; };
-    } else {
-      img.style.background = '#887';
-    }
+    img.alt = it ? it.nome : `Item id ${ing.id}`;
+    setImg(img, it && it.sprite ? it.sprite : '');
 
     const qtdBaseSpan = document.createElement('span');
     qtdBaseSpan.className = 'qtd-base';
-    qtdBaseSpan.textContent = `(${ing.quantidade})`;
+    qtdBaseSpan.textContent = `(${qtdBase})`;
 
     const nomeSpan = document.createElement('span');
     nomeSpan.className = 'nome';
-    nomeSpan.textContent = itemInfo ? itemInfo.nome : `Item id ${ing.id} não encontrado`;
+    nomeSpan.textContent = it ? it.nome : `Item id ${ing.id} não encontrado`;
 
     const qtdDesejadaSpan = document.createElement('span');
     qtdDesejadaSpan.className = 'qtd-desejada';
-    const qtdTotal = Number(ing.quantidade) * qtd;
-    qtdDesejadaSpan.textContent = qtdTotal;
+    // valor será preenchido no update
 
     top.appendChild(img);
     top.appendChild(qtdBaseSpan);
     top.appendChild(nomeSpan);
     top.appendChild(qtdDesejadaSpan);
 
+    // linha valores
     const bottom = document.createElement('div');
     bottom.className = 'ingrediente-valores';
-
-    const valorUnit = itemInfo ? Number(itemInfo.valor) || 0 : 0;
-    const valorTotal = valorUnit * qtdTotal;
-
-    bottom.textContent = `${MON} ${FMT.format(valorUnit)} = ${MON} ${FMT.format(Math.round(valorTotal))}`;
+    const valoresPrefix = `${MON} ${FMT.format(valorUnit)} = `;
+    // sufixo (total) será preenchido no update
 
     div.appendChild(top);
     div.appendChild(bottom);
     box.appendChild(div);
+
+    ingredienteNodes.push({
+      qtdBase,
+      valorUnit,
+      qtdDesejadaEl: qtdDesejadaSpan,
+      valoresEl: bottom,
+      valoresPrefix
+    });
+
+    custoUnitAtual += valorUnit * qtdBase;
   });
 }
 
-/* selecionar receita */
+/* ===== atualizar apenas números ===== */
+function atualizarNumeros(){
+  if(!receitaSelecionada) return;
+
+  // quantidade
+  const qtdInput = document.getElementById('qtd');
+  const q = clamp(Number(qtdInput.value)||1, Number(qtdInput.min)||1, Number(qtdInput.max)||100);
+  if(q !== Number(qtdInput.value)) qtdInput.value = q;
+
+  // preço venda unit
+  const precoUnit = Number(document.getElementById('preco-venda').value) || 0;
+
+  // atualizar linhas de ingredientes
+  for(const node of ingredienteNodes){
+    const qtdTotal = node.qtdBase * q;
+    node.qtdDesejadaEl.textContent = qtdTotal;
+    const total = Math.round(node.valorUnit * qtdTotal);
+    node.valoresEl.textContent = `${node.valoresPrefix}${MON} ${FMT.format(total)}`;
+  }
+
+  // painel custos e lucro
+  const custoUnit = Math.round(custoUnitAtual);
+  const custoTotal = Math.round(custoUnitAtual * q);
+  document.getElementById('custo-unit').textContent = `${MON} ${FMT.format(custoUnit)}`;
+  document.getElementById('custo-total').textContent = `${MON} ${FMT.format(custoTotal)}`;
+
+  const lucro = Math.round((precoUnit - custoUnitAtual) * q);
+  document.getElementById('lucro').textContent = `${MON} ${FMT.format(lucro)}`;
+}
+
+/* ===== selecionar receita ===== */
 function selecionarReceita(r){
   receitaSelecionada = r;
-  document.getElementById('nome-receita').textContent = r.nome;
-  renderIngredientes();
-  atualizarCusto(); // popula custos e lucro
+  document.getElementById('nome-receita').textContent = r.nome || 'Receita';
+  const nivel = (r.level ?? '—');
+  const cd = (r.cooldown ?? '—');
+  document.getElementById('meta-receita').textContent = `Nível ${nivel} — ${cd}s`;
+  construirIngredientes(r);
+  atualizarNumeros();
 }
 
-/* calcula custo unitário (1 unidade), custo total (qtd) e lucro: (precoVendaUnit - custoUnit) * qtd */
-function atualizarCusto(){
-  if(!receitaSelecionada) return;
-  const qtd = Number(document.getElementById('qtd').value) || 1;
-  // custo unitário = soma(valor_unit * qtd_base)
-  let custoUnit = 0;
-  receitaSelecionada.ingredientes.forEach(ing => {
-    const it = itens.find(x => Number(x.id) === Number(ing.id));
-    if(it && Number.isFinite(Number(it.valor))) {
-      custoUnit += Number(it.valor) * Number(ing.quantidade);
-    }
-  });
-  const custoTotal = custoUnit * qtd;
-  document.getElementById('custo-unit').textContent = MON + ' ' + FMT.format(Math.round(custoUnit));
-  document.getElementById('custo-total').textContent = MON + ' ' + FMT.format(Math.round(custoTotal));
+/* ===== listeners ===== */
+document.getElementById('qtd').addEventListener('input', atualizarNumeros);
+document.getElementById('preco-venda').addEventListener('input', atualizarNumeros);
 
-  const vendaUnit = Number(document.getElementById('preco-venda').value) || 0;
-  const lucro = (vendaUnit - custoUnit) * qtd;
-  document.getElementById('lucro').textContent = MON + ' ' + FMT.format(Math.round(lucro));
-
-  // atualiza lista no meio (qtd desejada e valores)
-  renderIngredientes();
-}
-
-/* listeners */
-document.getElementById('qtd').addEventListener('input', atualizarCusto);
-document.getElementById('preco-venda').addEventListener('input', atualizarCusto);
-
-/* start */
+/* ===== start ===== */
 carregar();
 </script>
 
