@@ -51,8 +51,13 @@
     overflow-y:auto;
   }
   #nome-receita { margin:0 0 4px 0; font-size:20px; }
-  #meta-receita { margin:0 0 10px 0; font-size:13px; color: var(--muted); }
-
+  #meta-receita {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: -4px;
+  margin-bottom: 10px;
+  }
   .ingrediente {
     background: rgba(255,255,255,0.03);
     padding:8px;
@@ -73,8 +78,10 @@
   .qtd-desejada {
     color: var(--accent);
     font-weight:700;
-    font-size:1.05em;
+    font-size:1.5em;
     margin-left:auto;
+    text-shadow: 0 0 1px #000;
+    letter-spacing: 0.5px;
   }
 
   .ingrediente-valores {
@@ -94,11 +101,14 @@
     flex-direction:column;
     gap:10px;
   }
-  .painel-box {
+  .painel-box strong {
     background: rgba(0,0,0,0.05);
     padding:10px;
     border-radius:8px;
     color: var(--text);
+    font-size: 16px; /* ou 18px se quiser mais destaque */
+  }
+
   }
   input[type="number"]{ width:100%; padding:8px; border-radius:6px; border: none; outline:none; font-size:14px; }
 
@@ -126,25 +136,25 @@
 
   <div id="painel" aria-label="Painel de cálculos">
     <div class="painel-box small-muted">
-      Quantidade (1–100)
+     📦 Quantidade (1–100)
       <input type="number" id="qtd" min="1" max="100" value="1">
     </div>
 
     <div class="painel-box small-muted">
-      Custo unitário (1 unidade): <strong id="custo-unit">Ƀ 0</strong>
+     ⚙️ Custo unitário (1 unidade): <strong id="custo-unit">Ƀ 0</strong>
     </div>
 
     <div class="painel-box small-muted">
-      Custo total: <strong id="custo-total">Ƀ 0</strong>
+     🧮 Custo total: <strong id="custo-total">Ƀ 0</strong>
     </div>
 
     <div class="painel-box small-muted">
-      Preço de venda (por unidade)
+     💰 Preço de venda (por unidade)
       <input type="number" id="preco-venda" value="0" step="0.01" min="0">
     </div>
 
     <div class="painel-box small-muted">
-      Lucro: <strong id="lucro">Ƀ 0</strong>
+     🤑 Lucro: <strong id="lucro">Ƀ 0</strong>
     </div>
   </div>
 
@@ -320,7 +330,7 @@ function atualizarNumeros(){
   document.getElementById('custo-unit').textContent = `${MON} ${FMT.format(custoUnit)}`;
   document.getElementById('custo-total').textContent = `${MON} ${FMT.format(custoTotal)}`;
 
-  const lucro = Math.round((precoUnit - custoUnitAtual) * q);
+  const lucro = (precoUnit * q * 0.97) - (custoUnitAtual * q);
   document.getElementById('lucro').textContent = `${MON} ${FMT.format(lucro)}`;
 }
 
@@ -345,3 +355,4 @@ carregar();
 
 </body>
 </html>
+
