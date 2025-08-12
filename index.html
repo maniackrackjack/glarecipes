@@ -51,13 +51,8 @@
     overflow-y:auto;
   }
   #nome-receita { margin:0 0 4px 0; font-size:20px; }
-  #meta-receita {
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 600;
-    margin-top: -4px;
-  margin-bottom: 10px;
-  }
+  #meta-receita { margin:10 0 0px 0; font-size:13px; color: var(--muted); }
+
   .ingrediente {
     background: rgba(255,255,255,0.03);
     padding:8px;
@@ -78,10 +73,8 @@
   .qtd-desejada {
     color: var(--accent);
     font-weight:700;
-    font-size:1.5em;
+    font-size:1.05em;
     margin-left:auto;
-    text-shadow: 0 0 1px #000;
-    letter-spacing: 0.5px;
   }
 
   .ingrediente-valores {
@@ -101,14 +94,11 @@
     flex-direction:column;
     gap:10px;
   }
-  .painel-box strong {
+  .painel-box {
     background: rgba(0,0,0,0.05);
     padding:10px;
     border-radius:8px;
     color: var(--text);
-    font-size: 16px; /* ou 18px se quiser mais destaque */
-  }
-
   }
   input[type="number"]{ width:100%; padding:8px; border-radius:6px; border: none; outline:none; font-size:14px; }
 
@@ -330,7 +320,10 @@ function atualizarNumeros(){
   document.getElementById('custo-unit').textContent = `${MON} ${FMT.format(custoUnit)}`;
   document.getElementById('custo-total').textContent = `${MON} ${FMT.format(custoTotal)}`;
 
-  const lucro = (precoUnit * q * 0.97) - (custoUnitAtual * q);
+  const receitaBruta = precoUnit * q;
+  const taxa = receitaBruta * 0.03; // 3% de taxa
+  const lucro = receitaBruta - taxa - (custoUnitAtual * q);
+
   document.getElementById('lucro').textContent = `${MON} ${FMT.format(lucro)}`;
 }
 
@@ -355,4 +348,3 @@ carregar();
 
 </body>
 </html>
-
