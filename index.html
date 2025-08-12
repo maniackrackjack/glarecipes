@@ -9,22 +9,22 @@
     display: flex;
     height: 100vh;
     margin: 0;
-    background: #4b3a33;
-    color: #f4f4f4;
+    background: #f4f4f4;
+    color: #333;
   }
   #lista-receitas {
     flex: 1;
-    background: #6b564c;
+    background: #d5c4bc;
     overflow-y: auto;
     padding: 10px;
   }
   .receita-item {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
     padding: 5px;
-    border-bottom: 1px solid #a89284;
+    border-bottom: 1px solid #b9a89e;
   }
   .receita-item img {
     width: 40px;
@@ -35,28 +35,51 @@
     flex: 2;
     background: #2e231f;
     padding: 10px;
+    overflow-y: auto;
   }
   .ingrediente {
+    background: #3c2d28;
+    padding: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+  .ingrediente-top {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 3px 0;
+    gap: 6px;
   }
-  .ingrediente img {
+  .ingrediente-top img {
     width: 32px;
     height: 32px;
     object-fit: contain;
   }
+  .qtd-base {
+    color: #ccc;
+  }
+  .nome {
+    color: #fff;
+    font-weight: bold;
+  }
+  .qtd-desejada {
+    color: #ffcc00;
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+  .ingrediente-valores {
+    font-size: 0.85em;
+    color: #aaa;
+    margin-left: 38px;
+  }
   #painel {
     flex: 1;
-    background: #8a7368;
+    background: #e6d4c8;
     padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
   .painel-box {
-    background: #6b564c;
+    background: white;
     padding: 10px;
     border-radius: 8px;
   }
@@ -80,8 +103,9 @@
     Quantidade:
     <input type="number" id="qtd" min="1" max="100" value="1">
   </div>
+  <div class="painel-box">Custo unitário: <span id="custo-unit">Ƀ 0</span></div>
   <div class="painel-box">Custo total: <span id="custo-total">Ƀ 0</span></div>
-  <div class="painel-box">Preço de venda (individual): <input type="number" id="preco-venda" value="0"></div>
+  <div class="painel-box">Preço de venda: <input type="number" id="preco-venda" value="0"></div>
   <div class="painel-box">Lucro: <span id="lucro">Ƀ 0</span></div>
 </div>
 
@@ -108,7 +132,7 @@ function carregarReceitas() {
   receitas.forEach(r => {
     const div = document.createElement('div');
     div.className = 'receita-item';
-    div.innerHTML = `<img src="${r.sprite}" alt=""> <span>${r.nome}</span>`;
+    div.innerHTML = `<img src="${r.sprite}" alt=""> <span>${r.level} (${r.cooldown}s) - ${r.nome}</span>`;
     div.onclick = () => selecionarReceita(r);
     lista.appendChild(div);
   });
@@ -119,18 +143,22 @@ function selecionarReceita(receita) {
   document.getElementById('nome-receita').innerText = receita.nome;
   const listaIng = document.getElementById('ingredientes-lista');
   listaIng.innerHTML = '';
+  const qtd = parseInt(document.getElementById('qtd').value) || 1;
   receita.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
     if (!itemInfo) return;
     const div = document.createElement('div');
     div.className = 'ingrediente';
-    const qtdBase = ing.quantidade;
-    const qtdNecessaria = qtdBase * (parseInt(document.getElementById('qtd').value) || 1);
-    const valorUnit = itemInfo.valor;
-    const valorTotal = valorUnit * qtdNecessaria;
     div.innerHTML = `
-      <img src="${itemInfo.sprite}" alt="">
-      (${qtdBase}) - <strong>${itemInfo.nome}</strong> - <strong>${qtdNecessaria}</strong> × Ƀ ${valorUnit.toLocaleString('pt-BR')} = Ƀ ${valorTotal.toLocaleString('pt-BR')}
+      <div class="ingrediente-top">
+        <img src="${itemInfo.sprite}" alt="">
+        <span class="qtd-base">(${ing.quantidade})</span>
+        <strong class="nome">${itemInfo.nome}</strong>
+        <strong class="qtd-desejada">${ing.quantidade * qtd}</strong>
+      </div>
+      <div class="ingrediente-valores">
+        Ƀ ${itemInfo.valor.toLocaleString('pt-BR')} = Ƀ ${(itemInfo.valor * ing.quantidade * qtd).toLocaleString('pt-BR')}
+      </div>
     `;
     listaIng.appendChild(div);
   });
@@ -140,30 +168,22 @@ function selecionarReceita(receita) {
 function atualizarCusto() {
   if (!receitaSelecionada) return;
   const qtd = parseInt(document.getElementById('qtd').value) || 1;
-  let custo = 0;
-  const listaIng = document.getElementById('ingredientes-lista');
-  listaIng.innerHTML = '';
+  let custoUnit = 0;
   receitaSelecionada.ingredientes.forEach(ing => {
     const itemInfo = itens.find(i => i.id === ing.id);
     if (itemInfo) {
-      const qtdBase = ing.quantidade;
-      const qtdNecessaria = qtdBase * qtd;
-      const valorUnit = itemInfo.valor;
-      const valorTotal = valorUnit * qtdNecessaria;
-      custo += valorTotal;
-      const div = document.createElement('div');
-      div.className = 'ingrediente';
-      div.innerHTML = `
-        <img src="${itemInfo.sprite}" alt="">
-        (${qtdBase}) - <strong>${itemInfo.nome}</strong> - <strong>${qtdNecessaria}</strong> × Ƀ ${valorUnit.toLocaleString('pt-BR')} = Ƀ ${valorTotal.toLocaleString('pt-BR')}
-      `;
-      listaIng.appendChild(div);
+      custoUnit += itemInfo.valor * ing.quantidade;
     }
   });
-  document.getElementById('custo-total').innerText = "Ƀ " + custo.toLocaleString('pt-BR');
-  const precoVenda = parseInt(document.getElementById('preco-venda').value) || 0;
-  const lucro = (precoVenda - (custo / qtd)) * qtd;
+  const custoTotal = custoUnit * qtd;
+  document.getElementById('custo-unit').innerText = "Ƀ " + custoUnit.toLocaleString('pt-BR');
+  document.getElementById('custo-total').innerText = "Ƀ " + custoTotal.toLocaleString('pt-BR');
+
+  const precoVendaUnit = parseInt(document.getElementById('preco-venda').value) || 0;
+  const lucro = (precoVendaUnit - custoUnit) * qtd;
   document.getElementById('lucro').innerText = "Ƀ " + lucro.toLocaleString('pt-BR');
+
+  selecionarReceita(receitaSelecionada);
 }
 
 document.getElementById('qtd').addEventListener('input', atualizarCusto);
