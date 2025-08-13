@@ -1,7 +1,9 @@
 [
   {
     "nome": "Steak and Egg Skillet",
+    "sprite": "sprites/receitas/steak_and_egg_skillet.png",
     "level": 70,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 1, "quantidade": 3 },
       { "id": 9, "quantidade": 2 },
@@ -13,7 +15,9 @@
   },
   {
     "nome": "Italian Salad",
+    "sprite": "sprites/receitas/italian_salad.png",
     "level": 70,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 11, "quantidade": 1 },
       { "id": 12, "quantidade": 5 },
@@ -26,7 +30,9 @@
   },
   {
     "nome": "Meat Medallion",
+    "sprite": "sprites/receitas/meat_medallion.png",
     "level": 80,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 1, "quantidade": 3 },
       { "id": 8, "quantidade": 8 },
@@ -41,7 +47,9 @@
   },
   {
     "nome": "Gourmet Meat Skewer",
+    "sprite": "sprites/receitas/gourmet_meat_skewer.png",
     "level": 80,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 1, "quantidade": 4 },
       { "id": 8, "quantidade": 5 },
@@ -55,7 +63,9 @@
   },
   {
     "nome": "Rabbit Curry",
+    "sprite": "sprites/receitas/rabbit_curry.png",
     "level": 90,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 4, "quantidade": 5 },
       { "id": 9, "quantidade": 1 },
@@ -69,7 +79,9 @@
   },
   {
     "nome": "Shrimp Scampi",
+    "sprite": "sprites/receitas/shrimp_scampi.png",
     "level": 90,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 3, "quantidade": 4 },
       { "id": 10, "quantidade": 1 },
@@ -85,7 +97,9 @@
   },
   {
     "nome": "Oyster Stew",
+    "sprite": "sprites/receitas/oyster_stew.png",
     "level": 100,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 7, "quantidade": 3 },
       { "id": 10, "quantidade": 2 },
@@ -98,7 +112,9 @@
   },
   {
     "nome": "Seafood Paella",
+    "sprite": "sprites/receitas/seafood_paella.png",
     "level": 100,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 2, "quantidade": 3 },
       { "id": 3, "quantidade": 5 },
@@ -114,7 +130,9 @@
   },
   {
     "nome": "Grilled Tuna",
+    "sprite": "sprites/receitas/grilled_tuna.png",
     "level": 110,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 6, "quantidade": 5 },
       { "id": 10, "quantidade": 2 },
@@ -129,7 +147,9 @@
   },
   {
     "nome": "Wagyu Beef",
+    "sprite": "sprites/receitas/wagyu_beef.png",
     "level": 110,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 1, "quantidade": 6 },
       { "id": 11, "quantidade": 4 },
@@ -146,7 +166,9 @@
   },
   {
     "nome": "Octopus Skewer",
+    "sprite": "sprites/receitas/octopus_skewer.png",
     "level": 120,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 19, "quantidade": 4 },
       { "id": 20, "quantidade": 1 },
@@ -158,7 +180,9 @@
   },
   {
     "nome": "Crab Soup",
+    "sprite": "sprites/receitas/crab_soup.png",
     "level": 120,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 11, "quantidade": 3 },
       { "id": 13, "quantidade": 6 },
@@ -174,7 +198,9 @@
   },
   {
     "nome": "Lamb Meat",
+    "sprite": "sprites/receitas/lamb_meat.png",
     "level": 130,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 11, "quantidade": 2 },
       { "id": 14, "quantidade": 1 },
@@ -191,7 +217,9 @@
   },
   {
     "nome": "Grilled Octopus",
+    "sprite": "sprites/receitas/grilled_octopus.png",
     "level": 130,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 11, "quantidade": 3 },
       { "id": 13, "quantidade": 6 },
@@ -207,7 +235,9 @@
   },
   {
     "nome": "Teriyaki Chicken",
+    "sprite": "sprites/receitas/teriyaki_chicken.png",
     "level": 140,
+    "cooldown": 300,
     "ingredientes": [
       { "id": 11, "quantidade": 3 },
       { "id": 13, "quantidade": 3 },
@@ -222,17 +252,19 @@
   },
   {
     "nome": "Shrimp Paella",
+    "sprite": "sprites/receitas/shrimp_paella.png",
     "level": 140,
+    "cooldown": 180,
     "ingredientes": [
       { "id": 3, "quantidade": 8 },
+      { "id": 21, "quantidade": 2 },
       { "id": 11, "quantidade": 1 },
       { "id": 13, "quantidade": 1 },
-      { "id": 15, "quantidade": 3 },
-      { "id": 18, "quantidade": 3 },
-      { "id": 19, "quantidade": 1 },
+      { "id": 24, "quantidade": 1 },
       { "id": 20, "quantidade": 1 },
-      { "id": 21, "quantidade": 2 },
-      { "id": 24, "quantidade": 1 }
+      { "id": 15, "quantidade": 3 },
+      { "id": 19, "quantidade": 1 },
+      { "id": 18, "quantidade": 3 }
     ]
   }
 ]
