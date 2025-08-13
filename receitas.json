@@ -1,9 +1,7 @@
 [
   {
-    "nome": "Bife e Ovo de Frigideira",
-    "sprite": "sprites/receitas/steak_and_egg_skillet.png",
+    "nome": "Steak and Egg Skillet",
     "level": 70,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 1, "quantidade": 3 },
       { "id": 9, "quantidade": 2 },
@@ -14,10 +12,8 @@
     ]
   },
   {
-    "nome": "Salada Italiana",
-    "sprite": "sprites/receitas/italian_salad.png",
+    "nome": "Italian Salad",
     "level": 70,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 11, "quantidade": 1 },
       { "id": 12, "quantidade": 5 },
@@ -29,10 +25,8 @@
     ]
   },
   {
-    "nome": "Medalhão de Carne",
-    "sprite": "sprites/receitas/meat_medallion.png",
+    "nome": "Meat Medallion",
     "level": 80,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 1, "quantidade": 3 },
       { "id": 8, "quantidade": 8 },
@@ -46,10 +40,8 @@
     ]
   },
   {
-    "nome": "Espeto de Carne gourmet",
-    "sprite": "sprites/receitas/gourmet_meat_skewer.png",
+    "nome": "Gourmet Meat Skewer",
     "level": 80,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 1, "quantidade": 4 },
       { "id": 8, "quantidade": 5 },
@@ -62,10 +54,8 @@
     ]
   },
   {
-    "nome": "Curry de Coelho",
-    "sprite": "sprites/receitas/rabbit_curry.png",
+    "nome": "Rabbit Curry",
     "level": 90,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 4, "quantidade": 5 },
       { "id": 9, "quantidade": 1 },
@@ -78,10 +68,8 @@
     ]
   },
   {
-    "nome": "Camarões Salteados",
-    "sprite": "sprites/receitas/shrimp_scampi.png",
+    "nome": "Shrimp Scampi",
     "level": 90,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 3, "quantidade": 4 },
       { "id": 10, "quantidade": 1 },
@@ -96,10 +84,8 @@
     ]
   },
   {
-    "nome": "Ensopado de Ostra",
-    "sprite": "sprites/receitas/oyster_stew.png",
+    "nome": "Oyster Stew",
     "level": 100,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 7, "quantidade": 3 },
       { "id": 10, "quantidade": 2 },
@@ -111,10 +97,8 @@
     ]
   },
   {
-    "nome": "Paella de Frutos do Mar",
-    "sprite": "sprites/receitas/seafood_paella.png",
+    "nome": "Seafood Paella",
     "level": 100,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 2, "quantidade": 3 },
       { "id": 3, "quantidade": 5 },
@@ -129,10 +113,8 @@
     ]
   },
   {
-    "nome": "Atum Grelhado",
-    "sprite": "sprites/receitas/grilled_tuna.png",
+    "nome": "Grilled Tuna",
     "level": 110,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 6, "quantidade": 5 },
       { "id": 10, "quantidade": 2 },
@@ -146,10 +128,8 @@
     ]
   },
   {
-    "nome": "Bife Wagyu",
-    "sprite": "sprites/receitas/wagyu_beef.png",
+    "nome": "Wagyu Beef",
     "level": 110,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 1, "quantidade": 6 },
       { "id": 11, "quantidade": 4 },
@@ -165,10 +145,8 @@
     ]
   },
   {
-    "nome": "Espetinho de Polvo",
-    "sprite": "sprites/receitas/octopus_skewer.png",
+    "nome": "Octopus Skewer",
     "level": 120,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 19, "quantidade": 4 },
       { "id": 20, "quantidade": 1 },
@@ -179,10 +157,8 @@
     ]
   },
   {
-    "nome": "Sopa de Caranguejo",
-    "sprite": "sprites/receitas/crab_soup.png",
+    "nome": "Crab Soup",
     "level": 120,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 11, "quantidade": 3 },
       { "id": 13, "quantidade": 6 },
@@ -197,10 +173,8 @@
     ]
   },
   {
-    "nome": "Carne de Cordeiro",
-    "sprite": "sprites/receitas/lamb_meat.png",
+    "nome": "Lamb Meat",
     "level": 130,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 11, "quantidade": 2 },
       { "id": 14, "quantidade": 1 },
@@ -216,10 +190,8 @@
     ]
   },
   {
-    "nome": "Polvo Grelhado",
-    "sprite": "sprites/receitas/grilled_octopus.png",
+    "nome": "Grilled Octopus",
     "level": 130,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 11, "quantidade": 3 },
       { "id": 13, "quantidade": 6 },
@@ -234,10 +206,8 @@
     ]
   },
   {
-    "nome": "Frango Teriyaki",
-    "sprite": "sprites/receitas/teriyaki_chicken.png",
+    "nome": "Teriyaki Chicken",
     "level": 140,
-    "cooldown": 300,
     "ingredientes": [
       { "id": 11, "quantidade": 3 },
       { "id": 13, "quantidade": 3 },
@@ -251,10 +221,8 @@
     ]
   },
   {
-    "nome": "Paella de Camarão",
-    "sprite": "sprites/receitas/shrimp_paella.png",
+    "nome": "Shrimp Paella",
     "level": 140,
-    "cooldown": 180,
     "ingredientes": [
       { "id": 3, "quantidade": 8 },
       { "id": 11, "quantidade": 1 },
@@ -264,7 +232,7 @@
       { "id": 19, "quantidade": 1 },
       { "id": 20, "quantidade": 1 },
       { "id": 21, "quantidade": 2 },
-      { "id": 24, "quantidade": 1 },
+      { "id": 24, "quantidade": 1 }
     ]
   }
 ]
