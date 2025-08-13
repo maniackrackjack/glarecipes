@@ -51,15 +51,7 @@
     overflow-y:auto;
   }
   #nome-receita { margin:0 0 4px 0; font-size:20px; }
-  #meta-receita {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin: 2px 0 10px 0;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 600;
-  }
+  #meta-receita { margin:10 0 0px 0; font-size:13px; color: var(--muted); }
 
   .ingrediente {
     background: rgba(255,255,255,0.03);
@@ -109,11 +101,6 @@
     padding:10px;
     border-radius:8px;
     color: var(--text);
-    font-size:16px; /* Fonte maior */
-  }
-  .painel-box strong {
-    font-size:18px;
-    color: var(--accent);
   }
   input[type="number"]{ width:100%; padding:8px; border-radius:6px; border: none; outline:none; font-size:14px; }
 
@@ -154,10 +141,6 @@
     </div>
 
     <div class="painel-box small-muted">
-     🧾 Taxa (3%): <strong id="taxa">Ƀ 0</strong>
-    </div>
-
-    <div class="painel-box small-muted">
      💰 Preço de venda (por unidade)
       <input type="number" id="preco-venda" value="0" step="0.01" min="0">
     </div>
@@ -168,17 +151,20 @@
   </div>
 
 <script>
+/* ===== util ===== */
 const FMT = new Intl.NumberFormat('pt-BR');
 const MON = 'Ƀ';
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 function money(n){ n = Number(n)||0; return MON + ' ' + FMT.format(Math.round(n)); }
 
+/* ===== dados ===== */
 let itens = [];
 let itensById = new Map();
 let receitas = [];
 let receitaSelecionada = null;
 
-const spriteCache = new Map();
+/* ===== cache de sprites (carrega uma vez e reaproveita) ===== */
+const spriteCache = new Map(); // url -> Promise<string (objectURL|dataURL)>
 async function getSpriteURL(url){
   if(!url) return '';
   if(spriteCache.has(url)) return spriteCache.get(url);
@@ -197,9 +183,11 @@ function setImg(imgEl, url){
   });
 }
 
-let ingredienteNodes = [];
+/* ===== refs dinâmicos para atualização sem recriar elementos ===== */
+let ingredienteNodes = []; // [{ qtdBase, valorUnit, qtdDesejadaEl, valoresEl, valoresPrefix }]
 let custoUnitAtual = 0;
 
+/* ===== carregar dados ===== */
 async function carregar(){
   try{
     const r1 = await fetch('itens.json');
@@ -218,6 +206,7 @@ async function carregar(){
   }
 }
 
+/* ===== lista esquerda: inclui nível e cooldown ===== */
 function montarListaReceitas(){
   const lista = document.getElementById('lista-receitas');
   lista.innerHTML = '';
@@ -226,7 +215,6 @@ function montarListaReceitas(){
     item.className = 'receita-item';
 
     const img = document.createElement('img');
-    img.loading = 'lazy';
     img.alt = r.nome || 'Sprite da receita';
     setImg(img, r.sprite);
 
@@ -245,6 +233,120 @@ function montarListaReceitas(){
   });
 }
 
+/* ===== construir ingredientes uma vez por seleção ===== */
 function construirIngredientes(r){
   const box = document.getElementById('ingredientes-lista');
   box.innerHTML = '';
+  ingredienteNodes = [];
+  custoUnitAtual = 0;
+
+  r.ingredientes.forEach(ing => {
+    const it = itensById.get(Number(ing.id));
+    const valorUnit = it ? Number(it.valor)||0 : 0;
+    const qtdBase = Number(ing.quantidade)||0;
+
+    // container
+    const div = document.createElement('div');
+    div.className = 'ingrediente';
+
+    // linha topo
+    const top = document.createElement('div');
+    top.className = 'ingrediente-top';
+
+    const img = document.createElement('img');
+    img.alt = it ? it.nome : `Item id ${ing.id}`;
+    setImg(img, it && it.sprite ? it.sprite : '');
+
+    const qtdBaseSpan = document.createElement('span');
+    qtdBaseSpan.className = 'qtd-base';
+    qtdBaseSpan.textContent = `(${qtdBase})`;
+
+    const nomeSpan = document.createElement('span');
+    nomeSpan.className = 'nome';
+    nomeSpan.textContent = it ? it.nome : `Item id ${ing.id} não encontrado`;
+
+    const qtdDesejadaSpan = document.createElement('span');
+    qtdDesejadaSpan.className = 'qtd-desejada';
+    // valor será preenchido no update
+
+    top.appendChild(img);
+    top.appendChild(qtdBaseSpan);
+    top.appendChild(nomeSpan);
+    top.appendChild(qtdDesejadaSpan);
+
+    // linha valores
+    const bottom = document.createElement('div');
+    bottom.className = 'ingrediente-valores';
+    const valoresPrefix = `${MON} ${FMT.format(valorUnit)} = `;
+    // sufixo (total) será preenchido no update
+
+    div.appendChild(top);
+    div.appendChild(bottom);
+    box.appendChild(div);
+
+    ingredienteNodes.push({
+      qtdBase,
+      valorUnit,
+      qtdDesejadaEl: qtdDesejadaSpan,
+      valoresEl: bottom,
+      valoresPrefix
+    });
+
+    custoUnitAtual += valorUnit * qtdBase;
+  });
+}
+
+/* ===== atualizar apenas números ===== */
+function atualizarNumeros(){
+  if(!receitaSelecionada) return;
+
+  // quantidade
+  const qtdInput = document.getElementById('qtd');
+  const q = clamp(Number(qtdInput.value)||1, Number(qtdInput.min)||1, Number(qtdInput.max)||100);
+  if(q !== Number(qtdInput.value)) qtdInput.value = q;
+
+  // preço venda unit
+  const precoUnit = Number(document.getElementById('preco-venda').value) || 0;
+
+  // atualizar linhas de ingredientes
+  for(const node of ingredienteNodes){
+    const qtdTotal = node.qtdBase * q;
+    node.qtdDesejadaEl.textContent = qtdTotal;
+    const total = Math.round(node.valorUnit * qtdTotal);
+    node.valoresEl.textContent = `${node.valoresPrefix}${MON} ${FMT.format(total)}`;
+  }
+
+  // painel custos e lucro
+  const custoUnit = Math.round(custoUnitAtual);
+  const custoTotal = Math.round(custoUnitAtual * q);
+  document.getElementById('custo-unit').textContent = `${MON} ${FMT.format(custoUnit)}`;
+  document.getElementById('custo-total').textContent = `${MON} ${FMT.format(custoTotal)}`;
+
+  const receitaBruta = precoUnit * q;
+  const taxa = receitaBruta * 0.03; // 3% de taxa
+  const lucro = receitaBruta - taxa - (custoUnitAtual * q);
+
+  document.getElementById('lucro').textContent = `${MON} ${FMT.format(lucro)}`;
+}
+
+/* ===== selecionar receita ===== */
+function selecionarReceita(r){
+  receitaSelecionada = r;
+  document.getElementById('nome-receita').textContent = r.nome || 'Receita';
+  const nivel = (r.level ?? '—');
+  const cd = (r.cooldown ?? '—');
+  document.getElementById('meta-receita').textContent = `Nível ${nivel} — ${cd}s`;
+  construirIngredientes(r);
+  atualizarNumeros();
+}
+
+/* ===== listeners ===== */
+document.getElementById('qtd').addEventListener('input', atualizarNumeros);
+document.getElementById('preco-venda').addEventListener('input', atualizarNumeros);
+
+/* ===== start ===== */
+carregar();
+</script>
+
+</body>
+</html>
