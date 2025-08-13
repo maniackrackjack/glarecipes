@@ -50,8 +50,16 @@
     box-sizing: border-box;
     overflow-y:auto;
   }
-  #nome-receita { margin:0 0 4px 0; font-size:20px; }
-  #meta-receita { margin:10 0 0px 0; font-size:13px; color: var(--muted); }
+  #nome-receita {
+    margin:0 0 4px 0;
+    font-size:20px;
+  }
+  #meta-receita {
+    margin: 2px 0 10px 0; /* antes estava: margin:10 0 0px 0; */
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+  }
 
   .ingrediente {
     background: rgba(255,255,255,0.03);
@@ -335,7 +343,7 @@ function selecionarReceita(r){
   document.getElementById('nome-receita').textContent = r.nome || 'Receita';
   const nivel = (r.level ?? '—');
   const cd = (r.cooldown ?? '—');
-  document.getElementById('meta-receita').textContent = `Nível ${nivel} — ${cd}s`;
+  document.getElementById('meta-receita').textContent = `⭐ Nível ${nivel} — ⏱️ ${cd}s`;
   construirIngredientes(r);
   atualizarNumeros();
 }
@@ -350,3 +358,4 @@ carregar();
 
 </body>
 </html>
+
