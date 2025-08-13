@@ -21,7 +21,6 @@
     color: var(--text);
   }
 
-  /* esquerda - lista de receitas */
   #lista-receitas {
     flex: 1;
     background: var(--left-bg);
@@ -39,17 +38,14 @@
   }
   .receita-item img { width:44px; height:44px; object-fit:contain; background:transparent; border-radius:6px; }
 
-  .receita-nome {
-    font-weight:700;
-  }
+  .receita-nome { font-weight:700; }
   .receita-meta {
-    margin: 2px 0 10px 0; /* antes estava: margin:10 0 0px 0; */
+    margin: 2px 0 10px 0;
     font-size: 14px;
     color: var(--accent);
     font-weight: 600;
   }
 
-  /* meio - detalhes */
   #detalhes {
     flex: 2;
     background: var(--mid-bg);
@@ -57,12 +53,9 @@
     box-sizing: border-box;
     overflow-y:auto;
   }
-  #nome-receita {
-    margin:0 0 4px 0;
-    font-size:20px;
-  }
+  #nome-receita { margin:0 0 4px 0; font-size:20px; }
   #meta-receita {
-    margin: 2px 0 10px 0; /* antes estava: margin:10 0 0px 0; */
+    margin: 2px 0 10px 0;
     font-size: 14px;
     color: var(--accent);
     font-weight: 600;
@@ -85,17 +78,6 @@
   .qtd-base { color:var(--muted); margin-right:6px; }
   .nome { font-weight:700; color:var(--text); margin-right:8px; }
 
-  .qtd-container {
-  	display: flex;
-  	flex-direction: column;
-  	align-items: flex-end;
-  }
-
-  .valor-total {
-  	font-size: 13px;
-  	color: var(--muted);
-  }
-	
   .qtd-desejada {
     color: var(--accent);
     font-weight:700;
@@ -112,7 +94,6 @@
     margin-top:6px;
   }
 
-  /* direita - painel */
   #painel {
     flex: 1;
     background: var(--right-bg);
@@ -132,7 +113,6 @@
 
   .small-muted { color: var(--muted); }
 
-  /* responsivo simples */
   @media(max-width:900px){
     body { flex-direction: column; height: auto; }
     #lista-receitas, #detalhes, #painel { width:100%; }
@@ -170,17 +150,17 @@
      💰 Preço de venda (por unidade)
       <input type="number" id="preco-venda" value="0" step="0.01" min="0">
     </div>
-	
-	<div class="painel-box small-muted">
-	 🧾 Taxa (3%): <strong id="taxa">Ƀ 0</strong>
-	</div>
-	
+    
+    <div class="painel-box small-muted">
+     🧾 Taxa (3%): <strong id="taxa">Ƀ 0</strong>
+    </div>
+    
     <div class="painel-box small-muted">
      🤑 Lucro: <strong id="lucro">Ƀ 0</strong>
     </div>
   </div>
-
-<script>
+  
+  <script>
 /* ===== util ===== */
 const FMT = new Intl.NumberFormat('pt-BR');
 const MON = 'Ƀ';
@@ -295,31 +275,14 @@ function construirIngredientes(r){
     nomeSpan.className = 'nome';
     nomeSpan.textContent = it ? it.nome : `Item id ${ing.id} não encontrado`;
 
-	const qtdContainer = document.createElement('div');
-	qtdContainer.className = 'qtd-container';
-
-	const qtdDesejadaSpan = document.createElement('div');
-	qtdDesejadaSpan.className = 'qtd-desejada';
-
-	const valorTotalSpan = document.createElement('div');
-	valorTotalSpan.className = 'valor-total';
-
-	// guardar referências para atualizar depois
-	ingredienteNodes.push({
-	  qtdBase,
-	  valorUnit,
-	  qtdDesejadaEl: qtdDesejadaSpan,
-	  valorTotalEl: valorTotalSpan
-	});
-
-	qtdContainer.appendChild(qtdDesejadaSpan);
-	qtdContainer.appendChild(valorTotalSpan);
+    const qtdDesejadaSpan = document.createElement('span');
+    qtdDesejadaSpan.className = 'qtd-desejada';
     // valor será preenchido no update
 
     top.appendChild(img);
     top.appendChild(qtdBaseSpan);
     top.appendChild(nomeSpan);
-    top.appendChild(qtdContainer);
+    top.appendChild(qtdDesejadaSpan);
 
     // linha valores
     const bottom = document.createElement('div');
@@ -356,13 +319,12 @@ function atualizarNumeros(){
   const precoUnit = Number(document.getElementById('preco-venda').value) || 0;
 
   // atualizar linhas de ingredientes
-  for (const node of ingredienteNodes) {
-  const qtdTotal = node.qtdBase * q;
-  node.qtdDesejadaEl.textContent = qtdTotal;
-
-  const total = Math.round(node.valorUnit * qtdTotal);
-  node.valorTotalEl.textContent = `${MON} ${FMT.format(total)}`;
-}
+  for(const node of ingredienteNodes){
+    const qtdTotal = node.qtdBase * q;
+    node.qtdDesejadaEl.textContent = qtdTotal;
+    const total = Math.round(node.valorUnit * qtdTotal);
+    node.valoresEl.textContent = `${node.valoresPrefix}${MON} ${FMT.format(total)}`;
+  }
 
   // painel custos e lucro
   const custoUnit = Math.round(custoUnitAtual);
@@ -400,5 +362,3 @@ carregar();
 
 </body>
 </html>
-
-
