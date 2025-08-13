@@ -85,6 +85,17 @@
   .qtd-base { color:var(--muted); margin-right:6px; }
   .nome { font-weight:700; color:var(--text); margin-right:8px; }
 
+  .qtd-container {
+  	display: flex;
+  	flex-direction: column;
+  	align-items: flex-end;
+  }
+
+  .valor-total {
+  	font-size: 13px;
+  	color: var(--muted);
+  }
+	
   .qtd-desejada {
     color: var(--accent);
     font-weight:700;
@@ -284,14 +295,31 @@ function construirIngredientes(r){
     nomeSpan.className = 'nome';
     nomeSpan.textContent = it ? it.nome : `Item id ${ing.id} não encontrado`;
 
-    const qtdDesejadaSpan = document.createElement('span');
-    qtdDesejadaSpan.className = 'qtd-desejada';
+	const qtdContainer = document.createElement('div');
+	qtdContainer.className = 'qtd-container';
+
+	const qtdDesejadaSpan = document.createElement('div');
+	qtdDesejadaSpan.className = 'qtd-desejada';
+
+	const valorTotalSpan = document.createElement('div');
+	valorTotalSpan.className = 'valor-total';
+
+	// guardar referências para atualizar depois
+	ingredienteNodes.push({
+	  qtdBase,
+	  valorUnit,
+	  qtdDesejadaEl: qtdDesejadaSpan,
+	  valorTotalEl: valorTotalSpan
+	});
+
+	qtdContainer.appendChild(qtdDesejadaSpan);
+	qtdContainer.appendChild(valorTotalSpan);
     // valor será preenchido no update
 
     top.appendChild(img);
     top.appendChild(qtdBaseSpan);
     top.appendChild(nomeSpan);
-    top.appendChild(qtdDesejadaSpan);
+    top.appendChild(qtdContainer);
 
     // linha valores
     const bottom = document.createElement('div');
@@ -328,12 +356,13 @@ function atualizarNumeros(){
   const precoUnit = Number(document.getElementById('preco-venda').value) || 0;
 
   // atualizar linhas de ingredientes
-  for(const node of ingredienteNodes){
-    const qtdTotal = node.qtdBase * q;
-    node.qtdDesejadaEl.textContent = qtdTotal;
-    const total = Math.round(node.valorUnit * qtdTotal);
-    node.valoresEl.textContent = `${node.valoresPrefix}${MON} ${FMT.format(total)}`;
-  }
+  for (const node of ingredienteNodes) {
+  const qtdTotal = node.qtdBase * q;
+  node.qtdDesejadaEl.textContent = qtdTotal;
+
+  const total = Math.round(node.valorUnit * qtdTotal);
+  node.valorTotalEl.textContent = `${MON} ${FMT.format(total)}`;
+}
 
   // painel custos e lucro
   const custoUnit = Math.round(custoUnitAtual);
@@ -371,4 +400,5 @@ carregar();
 
 </body>
 </html>
+
 
