@@ -345,6 +345,8 @@ function atualizarNumeros(){
   const taxa = receitaBruta * 0.03; // 3% de taxa
   const lucro = receitaBruta - taxa - (custoUnitAtual * q);
 
+  document.getElementById('taxa').textContent = `${MON} ${FMT.format(Math.round(taxa))}`;
+
   document.getElementById('lucro').textContent = `${MON} ${FMT.format(lucro)}`;
 }
 
@@ -369,3 +371,4 @@ carregar();
 
 </body>
 </html>
+
