@@ -1,0 +1,218 @@
+/* Layout base */
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  font-family: Arial, sans-serif;
+  background: #4b3a33;
+  color: #f4f4f4;
+}
+
+/* 3 panels container*/
+#app {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* Language selector */
+#lang-selector {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+#lang-selector button {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #f4f4f4;
+}
+
+/* Left: recipe list */
+#recipe-list {
+  flex: 1;
+  min-width: 180px;
+  background: #4b3a33;
+  overflow-y: auto;
+  padding: 12px;
+  box-sizing: border-box;
+}
+.recipe-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.recipe-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+.recipe-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+.recipe-meta {
+  font-size: 14px;
+  color: #ffcc00;
+  font-weight: 600;
+}
+
+/* Middle: recipe details */
+#recipe-details {
+  flex: 2;
+  min-width: 400px;
+  background: #2e231f;
+  padding: 14px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+.recipe-icon {
+  width: 48px;
+  height: 48px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+#recipe-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px 0;
+  font-size: 20px;
+}
+#recipe-level,
+#recipe-cooldown {
+  font-size: 14px;
+  color: #ffcc00;
+  font-weight: 600;
+  margin-right: 8px;
+}
+#ingredients-list {
+  margin-top: 10px;
+}
+.ingredient {
+  display: grid;
+  grid-template-columns: 40px 1fr auto; /* sprite fixa, nome flexível, valores fixos */
+  gap: 8px;
+  align-items: center;
+  background: rgba(255,255,255,0.03);
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.ingredient img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.ingredient-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ingredient-qty {
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(0,0,0,0.6);
+}
+
+.ingredient-value {
+  color: #ffcc00;
+}
+
+/* Right: calculation panel */
+#calc-panel {
+  flex: 1;
+  min-width: 200px;
+  background: #6b564c;
+  padding: 24px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.panel-box {
+  background: rgba(0,0,0,0.35);
+  padding: 10px;
+  border-radius: 8px;
+  color: #f4f4f4;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.panel-box.small-muted span,
+.panel-box.small-muted strong {
+  display: block;       /* cada elemento em sua própria linha */
+  text-align: left;   /* centraliza o texto */
+}
+
+.panel-box.small-muted strong {
+  font-size: 1.2em;     /* valor mais chamativo */
+  margin-top: 4px;      /* espaçamento entre label e valor */
+}
+
+/* Destaque para valores Berry */
+.output {
+  font-weight: bold;
+  color: #ffcc00; /* Berry padrão */
+}
+.profit {
+  color: #4cff4c; /* Verde positivo para lucro */
+  text-shadow: 0 0 4px rgba(76,255,76,0.5);
+}
+.loss {
+  color: #ff4c4c; /* Vermelho para prejuízo */
+  text-shadow: 0 0 4px rgba(255,76,76,0.5);
+}
+
+/* Campos numéricos */
+input[type="number"] {
+  width: 90%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+  color: #333;
+}
+.small-muted {
+  color: #bfb0a6;
+}
+
+/* Responsive layout */
+@media(max-width: 900px) {
+  body {
+    flex-direction: column;
+    height: auto;
+  }
+  #recipe-list,
+  #recipe-details,
+  #calc-panel {
+    width: 100%;
+  }
+}
+
+/* === Scroll independente só no painel de receitas (patch mínimo) === */
+#recipe-list {
+  overflow-y: auto !important;     /* garante a rolagem vertical */
+  -webkit-overflow-scrolling: touch;
+  max-height: 100dvh;              /* limita à altura da janela sem forçar layout */
+}
+
+/* Se #recipe-list estiver dentro de um container flex, permitir o encolhimento */
+#recipe-list { min-height: 0; }
+
+/* Opcional: se houver cabeçalho fixo acima, desconte a altura dele (ex.: 60px) */
+/* #recipe-list { max-height: calc(100dvh - 60px); } */

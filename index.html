@@ -1,399 +1,100 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
-<meta charset="utf-8" />
-<title>🍽️ Helper de Receitas</title>
-<style>
-  :root{
-    --mid-bg: #2e231f;
-    --left-bg: #4b3a33;
-    --right-bg: #6b564c;
-    --text: #f4f4f4;
-    --accent: #ffcc00;
-    --muted: #bfb0a6;
-  }
-  body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    font-family: Arial, sans-serif;
-    background: var(--left-bg);
-    color: var(--text);
-  }
-
-  #lista-receitas {
-    flex: 1;
-    background: var(--left-bg);
-    overflow-y:auto;
-    padding: 12px;
-    box-sizing: border-box;
-  }
-  .receita-item {
-    display:flex;
-    gap:10px;
-    align-items:center;
-    padding:8px;
-    border-bottom:1px solid rgba(0,0,0,0.12);
-    cursor:pointer;
-  }
-  .receita-item img { width:44px; height:44px; object-fit:contain; background:transparent; border-radius:6px; }
-
-  .receita-nome { font-weight:700; }
-  .receita-meta {
-    margin: 2px 0 10px 0;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  #detalhes {
-    flex: 2;
-    background: var(--mid-bg);
-    padding: 14px;
-    box-sizing: border-box;
-    overflow-y:auto;
-  }
-  #nome-receita { margin:0 0 4px 0; font-size:20px; }
-  #meta-receita {
-    margin: 2px 0 10px 0;
-    font-size: 14px;
-    color: var(--accent);
-    font-weight: 600;
-  }
-
-  .ingrediente {
-    background: rgba(255,255,255,0.03);
-    padding:8px;
-    border-radius:6px;
-    margin-bottom:8px;
-  }
-
-  .ingrediente-top {
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-  .ingrediente-top img { width:32px; height:32px; object-fit:contain; background:transparent; border-radius:4px; }
-
-  .qtd-base { color:var(--muted); margin-right:6px; }
-  .nome { font-weight:700; color:var(--text); margin-right:8px; }
-
-  .qtd-desejada {
-    color: var(--accent);
-    font-weight:700;
-    font-size:1.5em;
-    margin-left:auto;
-    text-shadow: 0 0 1px #000;
-    letter-spacing: 0.5px;
-    display: flex;
-	flex-direction: column;
-    align-items: flex-end;
-    line-height: 1.2;
-  }
-
-  .qtd-numero {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 1.5em;
-    text-shadow: 0 0 1px #000;
-    letter-spacing: 0.5px;
-  }
-
-  .preco-total {
-    font-size: 0.85em;
-    font-weight: 600;
-    color: var(--muted);
-    text-shadow: none;
-	margin-top: 2px;
-  }
-
-  .ingrediente-valores {
-    font-size:13px;
-    color: var(--muted);
-    margin-left:46px;
-    margin-top:6px;
-  }
-
-  #painel {
-    flex: 1;
-    background: var(--right-bg);
-    padding:12px;
-    box-sizing:border-box;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-  .painel-box {
-    background: rgba(0,0,0,0.05);
-    padding:10px;
-    border-radius:8px;
-    color: var(--text);
-  }
-  input[type="number"]{ width:100%; padding:8px; border-radius:6px; border: none; outline:none; font-size:14px; }
-
-  .small-muted { color: var(--muted); }
-
-  @media(max-width:900px){
-    body { flex-direction: column; height: auto; }
-    #lista-receitas, #detalhes, #painel { width:100%; }
-    .receita-meta { margin-left:0; margin-top:4px; }
-    .qtd-desejada { margin-left:8px; }
-    .ingrediente-valores { margin-left:42px; }
-  }
-</style>
+  <meta charset="utf-8" />
+  <title data-i18n="app.title">🍽️ Helper de Receitas</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Language selector -->
+  <header>
+  <div id="lang-selector" aria-label="Language selector">
+    <button data-lang="pt" title="Português" aria-label="Português">🇧🇷</button>
+    <button data-lang="en" title="English" aria-label="English">🇺🇸</button>
+    <button data-lang="es" title="Español" aria-label="Español">🇪🇸</button>
+    <button data-lang="pl" title="Polski" aria-label="Polski">🇵🇱</button>
+  </div>
+  </header>
 
-  <div id="lista-receitas" aria-label="Lista de receitas"></div>
-
-  <div id="detalhes">
-    <h2 id="nome-receita">Selecione uma receita</h2>
-    <p id="meta-receita" class="small-muted"></p>
-    <div id="ingredientes-lista"></div>
+  <!-- Left: recipes list -->
+  <div
+    id="recipe-list"
+    data-i18n="aria.recipesList"
+    data-i18n-attr="aria-label"
+    aria-label="Lista de Receitas">
   </div>
 
-  <div id="painel" aria-label="Painel de cálculos">
-    <div class="painel-box small-muted">
-     📦 Quantidade (1–100)
-      <input type="number" id="qtd" min="1" max="100" value="1">
-    </div>
-
-    <div class="painel-box small-muted">
-     ⚙️ Custo unitário (1 unidade): <strong id="custo-unit">Ƀ 0</strong>
-    </div>
-
-    <div class="painel-box small-muted">
-     🧮 Custo total: <strong id="custo-total">Ƀ 0</strong>
-    </div>
-
-    <div class="painel-box small-muted">
-     💰 Preço de venda (por unidade)
-      <input type="number" id="preco-venda" value="0" step="0.01" min="0">
-    </div>
-    
-    <div class="painel-box small-muted">
-     🧾 Taxa (3%): <strong id="taxa">Ƀ 0</strong>
-    </div>
-    
-    <div class="painel-box small-muted">
-     🤑 Lucro: <strong id="lucro">Ƀ 0</strong>
-    </div>
+  <!-- Middle: details -->
+  <div id="recipe-details">
+    <h2 id="recipe-name" data-i18n="ui.selectRecipe">Selecione uma Receita</h2>
+    <p>
+      <span id="recipe-level" class="small-muted"></span>
+      <span id="recipe-cooldown" class="small-muted"></span>
+    </p>
+    <div id="ingredients-list"></div>
   </div>
-  
+
+  <!-- Right: calculation panel -->
+  <div
+    id="calc-panel"
+    data-i18n="aria.calcPanel"
+    data-i18n-attr="aria-label"
+    aria-label="Painel de Cálculos">
+
+    <div class="panel-box small-muted">
+      <span id="lbl-qty" data-i18n="ui.qtyLabel">📦 Quantidade (1–100)</span>
+      <input type="number" id="qty" min="1" max="100" value="1">
+    </div>
+
+    <div class="panel-box small-muted">
+      <span id="lbl-unit-cost" data-i18n="ui.unitCostLabel">⚙️ Custo Unitário (por item)</span>
+      <strong id="unit-cost">Ƀ 0</strong>
+    </div>
+
+    <div class="panel-box small-muted">
+      <span id="lbl-sell-price" data-i18n="ui.sellPriceLabel">💰 Preço de Venda (por unidade)</span>
+      <input type="number" id="sell-price" min="1" max="999999" value="0" step="1">
+    </div>
+
+    <div class="panel-box small-muted">
+      <span id="lbl-total-cost" data-i18n="ui.totalCostLabel">🧮 Custo Total</span>
+      <strong id="total-cost">Ƀ 0</strong>
+    </div>
+    
+    <div class="panel-box small-muted">
+      <span id="lbl-fee" data-i18n="ui.feeLabel">🧾 Taxa (3%)</span>
+      <strong id="fee">Ƀ 0</strong>
+    </div>
+
+    <div class="panel-box small-muted">
+      <span id="lbl-profit" data-i18n="ui.profitLabel">🤑 Lucro</span>
+      <strong id="profit">Ƀ 0</strong>
+    </div>
+
+    <div class="panel-box small-muted">
+      <span id="lbl-prod-time" data-i18n="ui.cookTimeLabel">⏱️ Tempo de Cozimento</span>
+      <strong id="prod-time">0 min</strong>
+    </div>
+
+    <div class="panel-box small-muted">
+      <span id="lbl-bag-slots" data-i18n="ui.bagSlotsLabel">🎒 Slots Necessários na Bag</span>
+      <strong id="bag-slots">0</strong>
+    </div>
+
+</div>
+
+  <!-- Scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/money.js"></script>
+  <script src="js/main.js"></script>
   <script>
-/* ===== util ===== */
-const FMT = new Intl.NumberFormat('pt-BR');
-const MON = 'Ƀ';
-const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-function money(n){ n = Number(n)||0; return MON + ' ' + FMT.format(Math.round(n)); }
+    // PT como padrão
+    setLang('pt');
 
-/* ===== dados ===== */
-let itens = [];
-let itensById = new Map();
-let receitas = [];
-let receitaSelecionada = null;
-
-/* ===== cache de sprites (carrega uma vez e reaproveita) ===== */
-const spriteCache = new Map(); // url -> Promise<string (objectURL|dataURL)>
-async function getSpriteURL(url){
-  if(!url) return '';
-  if(spriteCache.has(url)) return spriteCache.get(url);
-  const p = fetch(url)
-    .then(r => { if(!r.ok) throw new Error('HTTP'); return r.blob(); })
-    .then(blob => URL.createObjectURL(blob))
-    .catch(() => '');
-  spriteCache.set(url, p);
-  return p;
-}
-function setImg(imgEl, url){
-  if(!url){ imgEl.src=''; imgEl.style.background='#887'; return; }
-  getSpriteURL(url).then(src => {
-    if(src){ imgEl.src = src; imgEl.style.background='transparent'; }
-    else { imgEl.src=''; imgEl.style.background='#887'; }
-  });
-}
-
-/* ===== refs dinâmicos para atualização sem recriar elementos ===== */
-let ingredienteNodes = []; // [{ qtdBase, valorUnit, qtdDesejadaEl, valoresEl, valoresPrefix }]
-let custoUnitAtual = 0;
-
-/* ===== carregar dados ===== */
-async function carregar(){
-  try{
-    const r1 = await fetch('itens.json');
-    if(!r1.ok) throw new Error('itens.json não encontrado / erro HTTP');
-    itens = await r1.json();
-    itensById = new Map(itens.map(it => [Number(it.id), it]));
-
-    const r2 = await fetch('receitas.json');
-    if(!r2.ok) throw new Error('receitas.json não encontrado / erro HTTP');
-    receitas = await r2.json();
-
-    montarListaReceitas();
-  }catch(err){
-    alert('Erro ao carregar arquivos: ' + err.message + '\nVer console para mais detalhes.');
-    console.error(err);
-  }
-}
-
-/* ===== lista esquerda: inclui nível e cooldown ===== */
-function montarListaReceitas(){
-  const lista = document.getElementById('lista-receitas');
-  lista.innerHTML = '';
-  receitas.forEach((r) => {
-    const item = document.createElement('div');
-    item.className = 'receita-item';
-
-    const img = document.createElement('img');
-    img.alt = r.nome || 'Sprite da receita';
-    setImg(img, r.sprite);
-
-    const txt = document.createElement('div');
-    const nivel = (r.level ?? '—');
-    const cd = (r.cooldown ?? '—');
-    txt.innerHTML = `
-      <div class="receita-nome">${r.nome}</div>
-      <div class="receita-meta">Nível ${nivel} — ${cd}s</div>
-    `;
-
-    item.appendChild(img);
-    item.appendChild(txt);
-    item.onclick = () => selecionarReceita(r);
-    lista.appendChild(item);
-  });
-}
-
-/* ===== construir ingredientes uma vez por seleção ===== */
-function construirIngredientes(r) {
-  const box = document.getElementById('ingredientes-lista');
-  box.innerHTML = '';
-  ingredienteNodes = [];
-  custoUnitAtual = 0;
-
-  r.ingredientes.forEach(ing => {
-    const it = itensById.get(Number(ing.id));
-    const valorUnit = it ? Number(it.valor) || 0 : 0;
-    const qtdBase = Number(ing.quantidade) || 0;
-
-    // container
-    const div = document.createElement('div');
-    div.className = 'ingrediente';
-
-    // linha topo
-    const top = document.createElement('div');
-    top.className = 'ingrediente-top';
-
-    const img = document.createElement('img');
-    img.alt = it ? it.nome : `Item id ${ing.id}`;
-    setImg(img, it && it.sprite ? it.sprite : '');
-
-    const qtdBaseSpan = document.createElement('span');
-    qtdBaseSpan.className = 'qtd-base';
-    qtdBaseSpan.textContent = `(${qtdBase})`;
-
-    const nomeSpan = document.createElement('span');
-    nomeSpan.className = 'nome';
-    nomeSpan.textContent = it ? it.nome : `Item id ${ing.id} não encontrado`;
-
-    const qtdDesejadaSpan = document.createElement('span');
-    qtdDesejadaSpan.className = 'qtd-desejada';
-
-    // número da quantidade desejada
-    const qtdNumero = document.createElement('span');
-    qtdNumero.className = 'qtd-numero';
-    qtdDesejadaSpan.appendChild(qtdNumero);
-
-    // preço total embaixo
-    const precoTotalSpan = document.createElement('span');
-    precoTotalSpan.className = 'preco-total';
-    precoTotalSpan.style.display = 'block';
-    qtdDesejadaSpan.appendChild(precoTotalSpan);
-
-    top.appendChild(img);
-    top.appendChild(qtdBaseSpan);
-    top.appendChild(nomeSpan);
-    top.appendChild(qtdDesejadaSpan);
-
-    // linha valores — apenas unitário
-    const bottom = document.createElement('div');
-    bottom.className = 'ingrediente-valores';
-    const valoresPrefix = `${MON} ${FMT.format(valorUnit)} (unit.)`;
-
-    div.appendChild(top);
-    div.appendChild(bottom);
-    box.appendChild(div);
-
-    ingredienteNodes.push({
-      qtdBase,
-      valorUnit,
-      qtdNumeroEl: qtdNumero,       // referência para número
-      precoTotalEl: precoTotalSpan, // referência para total
-      valoresEl: bottom,            // referência para unitário
-      valoresPrefix
+    // Troca de idioma pelo seletor
+    document.querySelectorAll('#lang-selector [data-lang]').forEach(btn => {
+      btn.addEventListener('click', () => setLang(btn.dataset.lang));
     });
-
-    custoUnitAtual += valorUnit * qtdBase;
-  });
-}
-
-/* ===== atualizar apenas números ===== */
-function atualizarNumeros() {
-  if (!receitaSelecionada) return;
-
-  // quantidade
-  const qtdInput = document.getElementById('qtd');
-  const q = clamp(Number(qtdInput.value) || 1, Number(qtdInput.min) || 1, Number(qtdInput.max) || 100);
-  if (q !== Number(qtdInput.value)) qtdInput.value = q;
-
-  // preço venda unitário informado no painel
-  const precoUnit = Number(document.getElementById('preco-venda').value) || 0;
-
-  // atualizar cada ingrediente
-  for (const node of ingredienteNodes) {
-    const qtdTotal = node.qtdBase * q;
-    node.qtdNumeroEl.textContent = qtdTotal;
-
-    const total = Math.round(node.valorUnit * qtdTotal);
-
-    // preço unitário na linha de baixo
-    node.valoresEl.textContent = node.valoresPrefix;
-
-    // preço total embaixo da quantidade desejada
-    node.precoTotalEl.textContent = `${MON} ${FMT.format(total)}`;
-  }
-
-  // painel custos e lucro
-  const custoUnit = Math.round(custoUnitAtual);
-  const custoTotal = Math.round(custoUnitAtual * q);
-  document.getElementById('custo-unit').textContent = `${MON} ${FMT.format(custoUnit)}`;
-  document.getElementById('custo-total').textContent = `${MON} ${FMT.format(custoTotal)}`;
-
-  const receitaBruta = precoUnit * q;
-  const taxa = receitaBruta * 0.03; // 3% de taxa
-  const lucro = receitaBruta - taxa - (custoUnitAtual * q);
-
-  document.getElementById('taxa').textContent = `${MON} ${FMT.format(Math.round(taxa))}`;
-  document.getElementById('lucro').textContent = `${MON} ${FMT.format(lucro)}`;
-}
-
-/* ===== selecionar receita ===== */
-function selecionarReceita(r){
-  receitaSelecionada = r;
-  document.getElementById('nome-receita').textContent = r.nome || 'Receita';
-  const nivel = (r.level ?? '—');
-  const cd = (r.cooldown ?? '—');
-  document.getElementById('meta-receita').textContent = `⭐ Nível ${nivel} — ⏱️ ${cd}s`;
-  construirIngredientes(r);
-  atualizarNumeros();
-}
-
-/* ===== listeners ===== */
-document.getElementById('qtd').addEventListener('input', atualizarNumeros);
-document.getElementById('preco-venda').addEventListener('input', atualizarNumeros);
-
-/* ===== start ===== */
-carregar();
-</script>
-
+  </script>
 </body>
 </html>
